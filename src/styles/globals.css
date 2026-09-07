@@ -1,0 +1,259 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Clinical Palette Tokens */
+  --color-brand-primary: #0f766e;
+  --color-brand-hover: #0d9488;
+  --color-brand-accent: #14b8a6;
+  
+  --color-bg-app: #f8fafc;
+  --color-bg-surface: #ffffff;
+  --color-bg-muted: #f1f5f9;
+  
+  --color-text-main: #0f172a;
+  --color-text-secondary: #334155;
+  --color-text-muted: #64748b;
+  
+  --color-border-subtle: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+  
+  /* Focus & Accessibility */
+  --focus-ring-color: #0284c7;
+  --focus-ring-offset: 2px;
+}
+
+/* =========================================================================
+   Patient Accessibility Mode (Easy Mode & High Contrast)
+   INTENSIFIED — dramatically larger text, vivid colour shifts
+   ========================================================================= */
+
+.kiosk-mode-elderly {
+  font-size: 1.55rem !important;   /* +55% base font scale */
+  line-height: 1.75;
+  letter-spacing: 0.01em;
+}
+
+.kiosk-mode-elderly h1 { font-size: 2.8rem !important; font-weight: 900 !important; }
+.kiosk-mode-elderly h2 { font-size: 2.2rem !important; font-weight: 900 !important; }
+.kiosk-mode-elderly h3 { font-size: 1.7rem !important; font-weight: 800 !important; }
+.kiosk-mode-elderly p,
+.kiosk-mode-elderly span,
+.kiosk-mode-elderly label,
+.kiosk-mode-elderly div {
+  font-size: inherit;
+}
+
+/* Enhanced High Contrast Mode — vivid colour inversion */
+.high-contrast-mode {
+  --color-text-main: #000000;
+  --color-text-secondary: #020617;
+  --color-text-muted: #0f172a;
+  --color-bg-app: #e2e8f0;
+  --color-bg-surface: #ffffff;
+  --color-border-subtle: #020617;
+  --color-border-strong: #000000;
+  --focus-ring-color: #f59e0b;
+  --focus-ring-offset: 4px;
+}
+
+/* Force dark, thick borders everywhere in Easy Mode */
+.high-contrast-mode .border-clinical-border,
+.high-contrast-mode .border-slate-200,
+.high-contrast-mode .border-brand-200,
+.kiosk-mode-elderly .border-clinical-border,
+.kiosk-mode-elderly .border-slate-200,
+.kiosk-mode-elderly .border-brand-200,
+.kiosk-mode-elderly .border-brand-300 {
+  border-color: #020617 !important;
+  border-width: 3px !important;
+}
+
+/* Intense card contrast — heavy shadow + vivid white */
+.high-contrast-mode .bg-white,
+.kiosk-mode-elderly .bg-white {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18) !important;
+}
+
+/* Vivid background tint on the whole kiosk canvas */
+.kiosk-mode-elderly {
+  background-color: #e2e8f0 !important;
+}
+
+/* All text forced to pure black for maximum readability */
+.kiosk-mode-elderly .text-clinical-navy,
+.kiosk-mode-elderly .text-clinical-slate,
+.kiosk-mode-elderly .text-clinical-muted,
+.kiosk-mode-elderly .text-slate-700,
+.kiosk-mode-elderly .text-slate-600,
+.kiosk-mode-elderly .text-slate-500,
+.kiosk-mode-elderly .text-slate-400 {
+  color: #020617 !important;
+}
+
+/* Brand colours become much deeper in Easy Mode */
+.kiosk-mode-elderly .bg-brand-50 { background-color: #ccfbf1 !important; }
+.kiosk-mode-elderly .bg-brand-700 { background-color: #044f48 !important; }
+.kiosk-mode-elderly .text-brand-700 { color: #044f48 !important; }
+.kiosk-mode-elderly .text-brand-900 { color: #022c22 !important; }
+.kiosk-mode-elderly .border-brand-700 { border-color: #022c22 !important; }
+
+/* Emerald accents vivified */
+.kiosk-mode-elderly .bg-emerald-50 { background-color: #d1fae5 !important; }
+.kiosk-mode-elderly .border-emerald-300 { border-color: #059669 !important; border-width: 3px !important; }
+.kiosk-mode-elderly .text-emerald-600,
+.kiosk-mode-elderly .text-emerald-700 { color: #047857 !important; }
+
+/* Amber/warning accents vivified */
+.kiosk-mode-elderly .bg-amber-50 { background-color: #fef3c7 !important; }
+.kiosk-mode-elderly .bg-amber-100 { background-color: #fde68a !important; }
+.kiosk-mode-elderly .border-amber-500 { border-color: #b45309 !important; border-width: 3px !important; }
+.kiosk-mode-elderly .text-amber-900 { color: #78350f !important; }
+
+/* Red/urgent accents vivified */
+.kiosk-mode-elderly .bg-red-50 { background-color: #fee2e2 !important; }
+.kiosk-mode-elderly .border-red-600 { border-color: #991b1b !important; border-width: 3px !important; }
+
+/* Intense Button and Input Targets in Easy Mode */
+.kiosk-mode-elderly main button.btn,
+.kiosk-mode-elderly main a.btn,
+.kiosk-mode-elderly main button[class*="kiosk"],
+.kiosk-mode-elderly main button[class*="primary"],
+.kiosk-mode-elderly main button[data-easy-target="true"] {
+  min-height: 64px !important;
+  font-size: 1.3rem !important;
+  font-weight: 800 !important;
+  border-width: 2.5px !important;
+  line-height: 1.2 !important;
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+  white-space: normal !important;
+  height: auto !important;
+}
+
+/* Ensure buttons without .btn (like text links, turn off, need help) don't get forced to 64px */
+.kiosk-mode-elderly main button:not(.btn):not([class*="kiosk"]):not([class*="primary"]) {
+  min-height: unset;
+  height: auto;
+  line-height: normal;
+}
+
+.kiosk-mode-elderly main input:not([type="checkbox"]):not([type="radio"]) {
+  min-height: 68px !important;
+  font-size: 1.4rem !important;
+  font-weight: 700 !important;
+  padding-left: 1.25rem !important;
+  padding-right: 1.25rem !important;
+  border-width: 3px !important;
+  border-color: #020617 !important;
+}
+
+/* Cards with amber borders get thicker */
+.kiosk-mode-elderly main [class*="border-amber-"] {
+  border-width: 4px !important;
+}
+
+/* High Visibility Buttons */
+.high-contrast-mode button:not([role="switch"]),
+.kiosk-mode-elderly button:not([role="switch"]) {
+  letter-spacing: 0.02em;
+}
+
+.high-contrast-mode button.bg-brand-700,
+.kiosk-mode-elderly button.bg-brand-700 {
+  background-color: #044f48 !important;
+  color: #ffffff !important;
+  border: 3px solid #022c22 !important;
+}
+
+/* Guarantee toggle switch buttons never stretch */
+button[role="switch"],
+.kiosk-mode-elderly button[role="switch"] {
+  min-height: unset !important;
+  max-height: unset !important;
+  font-size: inherit;
+  line-height: normal;
+  box-sizing: border-box;
+}
+
+/* Header buttons in easy mode retain clean pill shape */
+.kiosk-mode-elderly header button {
+  min-height: unset !important;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+/* Kiosk footer also gets larger text */
+.kiosk-mode-elderly footer {
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  padding: 1rem !important;
+}
+
+/* Dynamic text scaling presets — also boosted */
+.text-scale-normal {
+  font-size: 1.2rem;
+}
+
+.text-scale-large {
+  font-size: 1.55rem !important;
+}
+
+.text-scale-xlarge {
+  font-size: 1.8rem !important;
+}
+
+/* Accessible focus ring */
+*:focus-visible {
+  outline: 3.5px solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Equalizer audio wave animation for live TTS feedback */
+@keyframes audio-wave {
+  0%, 100% { height: 6px; }
+  50% { height: 22px; }
+}
+
+.animate-audio-bar-1 {
+  animation: audio-wave 0.8s ease-in-out infinite;
+}
+.animate-audio-bar-2 {
+  animation: audio-wave 0.8s ease-in-out infinite 0.2s;
+}
+.animate-audio-bar-3 {
+  animation: audio-wave 0.8s ease-in-out infinite 0.4s;
+}
+
+
+/* Scrollbar customization for clinical views */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Skeleton Loading Animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}

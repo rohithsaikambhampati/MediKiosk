@@ -1,0 +1,10 @@
+export { AdminLoginPage } from './AdminLoginPage';
+export { AdminDashboardPage } from './AdminDashboardPage';
+export { AdminPatientsPage } from './AdminPatientsPage';
+export { AdminDoctorsPage } from './AdminDoctorsPage';
+export { AdminDepartmentsPage } from './AdminDepartmentsPage';
+export { AdminAnalyticsPage } from './AdminAnalyticsPage';
+export { AdminLanguagesPage } from './AdminLanguagesPage';
+export { AdminIntegrationsPage } from './AdminIntegrationsPage';
+export { AdminSecurityPage } from './AdminSecurityPage';
+export { AdminAuditLogsPage } from './AdminAuditLogsPage';
