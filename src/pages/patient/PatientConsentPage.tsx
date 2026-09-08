@@ -349,7 +349,7 @@ export const PatientConsentPage: React.FC = () => {
             I DO NOT AGREE
           </Button>
 
-          {/* Easy Mode 1-Tap Agree All Dominant Button */}
+          {/* Easy Mode 1-Tap Agree Required Dominant Button */}
           {accessibility.easyMode && (
             <Button
               variant="primary"
@@ -357,18 +357,18 @@ export const PatientConsentPage: React.FC = () => {
               fullWidth
               rightIcon={ArrowRight}
               onClick={() => {
-                setConsent({
+                setConsent((prev) => ({
+                  ...prev,
                   voice: true,
                   documents: true,
                   aiProcessing: true,
                   hospitalSharing: true,
-                  abhaLinking: true,
-                });
+                }));
                 handleAgree();
               }}
               className="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-lg sm:text-xl py-4 min-h-[64px] shadow-lg mb-2 order-first sm:order-none"
             >
-              I AGREE TO ALL & CONTINUE ➔
+              I AGREE & CONTINUE ➔
             </Button>
           )}
 
