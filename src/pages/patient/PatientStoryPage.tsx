@@ -13,7 +13,7 @@ import { cn } from '../../utils/cn';
 
 export const PatientStoryPage: React.FC = () => {
   const navigate = useNavigate();
-  const { patientStory, updateStoryFactVerification, accessibility, speak, stopSpeaking, t } = usePatientIntake();
+  const { patientStory, updateStoryFactVerification, accessibility, speak, stopSpeaking, t, language } = usePatientIntake();
   const [selectedFact, setSelectedFact] = useState<MedicalFact | null>(null);
   const [isEvidenceOpen, setIsEvidenceOpen] = useState(false);
   const [showConflictModal, setShowConflictModal] = useState(false);
@@ -21,16 +21,25 @@ export const PatientStoryPage: React.FC = () => {
   React.useEffect(() => {
     if (accessibility.voiceGuidance || accessibility.easyMode) {
       const timer = setTimeout(() => {
-        speak(
-          'Here is your structured clinical timeline and summary. You can review what has been recorded, or continue to final review.'
-        );
+        const storyPrompts: Record<string, string> = {
+          en: 'Here is your structured clinical timeline and summary. You can review what has been recorded, or continue to final review.',
+          hi: 'यहाँ आपका मेडिकल टाइमलाइन और सारांश है। आप दर्ज की गई जानकारी की समीक्षा कर सकते हैं या अंतिम समीक्षा पर जा सकते हैं।',
+          te: 'ఇది మీ మెడికల్ టైమ్‌లైన్ మరియు సారాంశం. మీరు నమోదైన వివరాలను సమీక్షించవచ్చు లేదా చివరి సమీక్షకు వెళ్లవచ్చు.',
+          ta: 'இது உங்கள் மருத்துவக் காலக்கோடு மற்றும் சுருக்கம். பதிவான விவரங்களை நீங்கள் சரிபார்க்கலாம்.',
+          bn: 'এখানে আপনার মেডিকেল টাইমলাইন ও সারসংক্ষেপ রয়েছে। আপনি রেকর্ডকৃত তথ্য পর্যালোচনা করতে পারেন।',
+          mr: 'येथे तुमची वैद्यकीय टाइमलाइन आणि सारांश आहे. तुम्ही नोंदवलेली माहिती तपासू शकता.',
+          gu: 'અહીં તમારી મેડિકલ ટાઇમલાઇન અને સારાંશ છે. તમે નોંધાયેલી વિગતો ચકાસી શકો છો.',
+          kn: 'ಇಲ್ಲಿ ನಿಮ್ಮ ವೈದ್ಯಕೀಯ ವೇಳಾಪಟ್ಟಿ ಮತ್ತು ಸಾರಾಂಶವಿದೆ. ನೀವು ದಾಖಲಾದ ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸಬಹುದು.',
+          ml: 'ഇവിടെ നിങ്ങളുടെ മെഡിക്കൽ ടൈംലൈനും സംഗ്രഹവും കാണാം. വിവരങ്ങൾ പരിശോധിക്കാവുന്നതാണ്.',
+        };
+        speak(storyPrompts[language] || storyPrompts['en']);
       }, 400);
       return () => {
         clearTimeout(timer);
         stopSpeaking();
       };
     }
-  }, [accessibility.voiceGuidance, accessibility.easyMode, speak, stopSpeaking]);
+  }, [accessibility.voiceGuidance, accessibility.easyMode, speak, stopSpeaking, language]);
 
   const handleOpenEvidence = (fact: MedicalFact) => {
     setSelectedFact(fact);

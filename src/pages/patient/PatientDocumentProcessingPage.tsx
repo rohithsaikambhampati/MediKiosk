@@ -11,21 +11,32 @@ import { cn } from '../../utils/cn';
 
 export const PatientDocumentProcessingPage: React.FC = () => {
   const navigate = useNavigate();
-  const { t, refreshPatientStory, accessibility, speak, stopSpeaking } = usePatientIntake();
+  const { t, refreshPatientStory, accessibility, speak, stopSpeaking, language } = usePatientIntake();
   const [progress, setProgress] = useState(15);
   const [stage, setStage] = useState(1);
 
   React.useEffect(() => {
     if (accessibility.voiceGuidance || accessibility.easyMode) {
       const timer = setTimeout(() => {
-        speak('We are now analysing your documents and building your clinical story. Please wait a few moments.');
+        const processingPrompts: Record<string, string> = {
+          en: 'We are now analysing your documents and building your clinical story. Please wait a few moments.',
+          hi: 'हम आपके दस्तावेज़ों का विश्लेषण कर रहे हैं और आपकी मेडिकल कहानी तैयार कर रहे हैं। कृपया कुछ क्षण प्रतीक्षा करें।',
+          te: 'మేము మీ పత్రాలను విశ్లేషించి మీ మెడికల్ హిస్టరీని తయారు చేస్తున్నాము. దయచేసి కాసేపు వేచి ఉండండి.',
+          ta: 'உங்கள் ஆவணங்களை ஆய்வு செய்து மருத்துவ அறிக்கையை தயாரிக்கிறோம். தயவுசெய்து சிறிது நேரம் காத்திருக்கவும்.',
+          bn: 'আমরা আপনার নথি বিশ্লেষণ করে চিকিৎসা বিবরণ তৈরি করছি। অনুগ্রহ করে কিছু সময় অপেক্ষা করুন।',
+          mr: 'आम्ही तुमचे दस्तऐवज विश्लेषित करत आहोत. कृपया थोडा वेळ थांबा.',
+          gu: 'અમે તમારા દસ્તાવેજોનું વિશ્લેષણ કરી રહ્યા છીએ. કૃપા કરીને થોડી રાહ જુઓ.',
+          kn: 'ನಾವು ನಿಮ್ಮ ದಾಖಲೆಗಳನ್ನು ವಿಶ್ಲೇಷಿಸುತ್ತಿದ್ದೇವೆ. ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಕಾಯಿರಿ.',
+          ml: 'നിങ്ങളുടെ രേഖകൾ പരിശോധിച്ചുകൊണ്ടിരിക്കുകയാണ്. ദയവായി അല്പം കാത്തിരിക്കുക.',
+        };
+        speak(processingPrompts[language] || processingPrompts['en']);
       }, 300);
       return () => {
         clearTimeout(timer);
         stopSpeaking();
       };
     }
-  }, [accessibility.voiceGuidance, accessibility.easyMode, speak, stopSpeaking]);
+  }, [accessibility.voiceGuidance, accessibility.easyMode, speak, stopSpeaking, language]);
 
   useEffect(() => {
     const timer1 = setTimeout(() => {

@@ -25,15 +25,24 @@ export const PatientReviewPage: React.FC = () => {
     accessibility,
     speak,
     t,
+    language,
   } = usePatientIntake();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleReadSummaryAloud = () => {
-    speak(
-      `Review summary for ${identity.name || 'Patient'}. Chief Concern: Chest tightness and pressure since yesterday, radiating toward left arm with sweating. Current Medications: Amlodipine 5 milligrams once daily. Uploaded documents: ${uploadedDocs.length} documents. Please confirm your review to alert the nurse and receive your token.`,
-      true
-    );
+    const reviewPrompts: Record<string, string> = {
+      en: `Review summary for ${identity.name || 'Patient'}. Chief Concern: Chest tightness and pressure since yesterday, radiating toward left arm with sweating. Uploaded documents: ${uploadedDocs.length} documents. Please confirm your review to alert the nurse and receive your token.`,
+      hi: `मरीज़ ${identity.name || ''} की मेडिकल समीक्षा। मुख्य समस्या: कल से सीने में जकड़न और पसीना आना। अपलोड किए गए दस्तावेज़: ${uploadedDocs.length}। कृपया पुष्टि करें और नर्स को सूचित करें।`,
+      te: `రోగి ${identity.name || ''} మెడికల్ సమీక్ష. ముఖ్య సమస్య: నిన్నటి నుండి ఛాతీలో బిగుతు మరియు చెమటలు. అప్‌లోడ్ చేసిన పత్రాలు: ${uploadedDocs.length}. దయచేసి ధృవీకరించి నర్సును అప్రమత్తం చేయండి.`,
+      ta: `நோயாளி ${identity.name || ''} மருத்துவ சரிபார்ப்பு. முக்கிய பிரச்சனை: நெஞ்சு இறுக்கம் மற்றும் வியர்வை. பதிவேற்றிய ஆவணங்கள்: ${uploadedDocs.length}. சரிபார்த்து செவிலியருக்கு தெரிவிக்கவும்.`,
+      bn: `রোগী ${identity.name || ''}-এর চিকিৎসা পর্যালোচনা। প্রধান সমস্যা: গতকাল থেকে বুকে অস্বস্তি ও ঘাম। আপলোড করা নথি: ${uploadedDocs.length}। নিশ্চিত করুন।`,
+      mr: `रुग्ण ${identity.name || ''} वैद्यकीय तपासणी. मुख्य त्रास: कालपासून छातीत जडपणा आणि घाम येणे. दस्तऐवज: ${uploadedDocs.length}. पुष्टी करा.`,
+      gu: `દર્દી ${identity.name || ''} મેડિકલ સમીક્ષા. મુખ્ય તકલીફ: ગઈકાલથી છાતીમાં દબાણ અને પરસેવો. દસ્તાવેજો: ${uploadedDocs.length}. પુષ્ટિ કરો.`,
+      kn: `ರೋಗಿ ${identity.name || ''} ವೈದ್ಯಕೀಯ ಪರಿಶೀಲನೆ. ಪ್ರಮುಖ ಸಮಸ್ಯೆ: ನಿನ್ನೆಯಿಂದ ಎದೆಯಲ್ಲಿ ಬಿಗಿತ. ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ದಾಖಲೆಗಳು: ${uploadedDocs.length}. ಖಚಿತಪಡಿಸಿ.`,
+      ml: `രോഗി ${identity.name || ''} മെഡിക്കൽ സംഗ്രഹം. പ്രധാന പ്രശ്നം: നെഞ്ചിൽ വലിവും വിയർപ്പും. രേഖകൾ: ${uploadedDocs.length}. സ്ഥിരീകരിക്കുക.`,
+    };
+    speak(reviewPrompts[language] || reviewPrompts['en'], true);
   };
 
   const handleSubmit = async () => {

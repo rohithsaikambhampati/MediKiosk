@@ -11,7 +11,7 @@ import { cn } from '../../utils/cn';
 
 export const PatientDocumentsPage: React.FC = () => {
   const navigate = useNavigate();
-  const { uploadedDocs, addDocument, removeDocument, accessibility, speak, stopSpeaking, t } = usePatientIntake();
+  const { uploadedDocs, addDocument, removeDocument, accessibility, speak, stopSpeaking, t, language } = usePatientIntake();
   const [isCameraModalOpen, setIsCameraModalOpen] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isLoadingDemo, setIsLoadingDemo] = useState(false);
@@ -19,16 +19,25 @@ export const PatientDocumentsPage: React.FC = () => {
   React.useEffect(() => {
     if (accessibility.voiceGuidance || accessibility.easyMode) {
       const timer = setTimeout(() => {
-        speak(
-          'Document scanning stage. If you have brought prescriptions or lab reports, you can scan them using the camera. If you do not have any papers, tap Skip Documents to continue directly to your summary.'
-        );
+        const docPrompts: Record<string, string> = {
+          en: 'Document scanning stage. If you have brought prescriptions or lab reports, you can scan them using the camera. If you do not have any papers, tap Skip Documents to continue.',
+          hi: 'दस्तावेज़ स्कैनिंग चरण। यदि आप पर्चे या लैब रिपोर्ट लाए हैं, तो आप उन्हें कैमरे से स्कैन कर सकते हैं। यदि आपके पास कोई कागजात नहीं हैं, तो आगे बढ़ने के लिए स्किप करें।',
+          te: 'పత్రాల స్కానింగ్ దశ. మీరు ప్రిస్క్రిప్షన్లు లేదా లాబ్ నివేదికలను తెచ్చినట్లయితే, కెమెరాతో స్కాన్ చేయవచ్చు. కాగితాలు లేకపోతే దాటవేయి నొక్కండి.',
+          ta: 'ஆவணங்கள் ஸ்கேனிங் படி. பிரஸ்கிரிப்ஷன் அல்லது லேப் அறிக்கைகளை கேமரா மூலம் ஸ்கேன் செய்யலாம். ஆவணங்கள் இல்லை என்றால் தவிர்க்கவும்.',
+          bn: 'নথি স্ক্যানিং ধাপ। আপনার কাছে প্রেসক্রিপশন বা ল্যাব রিপোর্ট থাকলে ক্যামেরার মাধ্যমে স্ক্যান করতে পারেন। নথি না থাকলে স্কিপ করুন।',
+          mr: 'दस्तऐवज स्कॅनिंग टप्पा. तुमच्याकडे प्रिस्क्रिप्शन किंवा लॅब रिपोर्ट असल्यास कॅमेऱ्याने स्कॅन करू शकता. कागदपत्रे नसल्यास पुढे जाण्यासाठी स्किप दाबा.',
+          gu: 'દસ્તાવેજ સ્કેનિંગ તબક્કો. જો તમે પ્રિસ્ક્રિપ્શન અથવા લેબ રિપોર્ટ લાવ્યા હોવ, તો તેને કેમેરાથી સ્કેન કરી શકો છો. જો કાગળ ન હોય તો આગળ વધો.',
+          kn: 'ದಾಖಲೆಗಳ ಸ್ಕ್ಯಾನಿಂಗ್ ಹಂತ. ನಿಮ್ಮ ಬಳಿ ಪ್ರಿಸ್ಕ್ರಿಪ್ಷನ್ ಅಥವಾ ಲ್ಯಾಬ್ ವರದಿಗಳಿದ್ದರೆ ಕ್ಯಾಮೆರಾದಿಂದ ಸ್ಕ್ಯಾನ್ ಮಾಡಿ. ದಾಖಲೆಗಳಿಲ್ಲದಿದ್ದರೆ ಸ್ಕಿಪ್ ಮಾಡಿ.',
+          ml: 'രേഖകൾ സ്കാൻ ചെയ്യുന്ന ഘട്ടം. പ്രിസ്ക്രിപ്ഷനുകളോ ലാബ് റിപ്പോർട്ടുകളോ ഉണ്ടെങ്കിൽ ക്യാമറ ഉപയോഗിച്ച് സ്കാൻ ചെയ്യാം. രേഖകൾ ഇല്ലെങ്കിൽ സ്കിപ്പ് ചെയ്യുക.',
+        };
+        speak(docPrompts[language] || docPrompts['en']);
       }, 400);
       return () => {
         clearTimeout(timer);
         stopSpeaking();
       };
     }
-  }, [accessibility.voiceGuidance, accessibility.easyMode, speak, stopSpeaking]);
+  }, [accessibility.voiceGuidance, accessibility.easyMode, speak, stopSpeaking, language]);
 
   const handleLoadDemoDocs = async () => {
     setIsLoadingDemo(true);

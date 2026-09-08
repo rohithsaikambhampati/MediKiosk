@@ -12,7 +12,7 @@ import { cn } from '../../utils/cn';
 
 export const PatientIdentityPage: React.FC = () => {
   const navigate = useNavigate();
-  const { identity, verifyIdentity, requestStaffAssistance, accessibility, speak, stopSpeaking, t } = usePatientIntake();
+  const { identity, verifyIdentity, requestStaffAssistance, accessibility, speak, stopSpeaking, t, language } = usePatientIntake();
   const [tab, setTab] = useState<'phone' | 'mrn' | 'abha'>('phone');
   const [inputValue, setInputValue] = useState('9876543210');
   const [isVerifying, setIsVerifying] = useState(false);
@@ -20,16 +20,25 @@ export const PatientIdentityPage: React.FC = () => {
   React.useEffect(() => {
     if (accessibility.voiceGuidance || accessibility.easyMode) {
       const timer = setTimeout(() => {
-        speak(
-          'Identity verification. Please verify your mobile number, or tap the quick check-in card to continue without typing.'
-        );
+        const identityPrompts: Record<string, string> = {
+          en: 'Identity verification. Please verify your mobile number, or tap the quick check-in card to continue without typing.',
+          hi: 'पहचान सत्यापन। कृपया अपना मोबाइल नंबर सत्यापित करें, या बिना टाइप किए आगे बढ़ने के लिए 1-टैप कार्ड दबाएं।',
+          te: 'గుర్తింపు సరిచూడటం. దయచేసి మీ మొబైల్ సంఖ్యను ధృవీకరించండి, లేదా టైప్ చేయకుండా కొనసాగడానికి 1-ట్యాప్ కార్డ్‌ను నొక్కండి.',
+          ta: 'அடையாளச் சரிபார்ப்பு. உங்கள் மொபைல் எண்ணைச் சரிபார்க்கவும், அல்லது தட்டச்சு செய்யாமல் தொடர 1-டேப் கார்டைத் தட்டவும்.',
+          bn: 'পরিচয় যাচাইকরণ। অনুগ্রহ করে আপনার মোবাইল নম্বর যাচাই করুন, অথবা টাইপ না করে এগিয়ে যেতে ১-ট্যাপ কার্ডটি চাপুন।',
+          mr: 'ओळख पडताळणी. कृपया आपला मोबाईल नंबर सत्यापित करा, किंवा न टाईप करता पुढे जाण्यासाठी 1-टॅप कार्ड दाबा.',
+          gu: 'ઓળખ ચકાસણી. કૃપા કરીને તમારો મોબાઇલ નંબર ચકાસો, અથવા ટાઇપ કર્યા વગર આગળ વધવા માટે 1-ટેપ કાર્ડ દબાવો.',
+          kn: 'ಗುರುತಿನ ಪರಿಶೀಲನೆ. ದಯವಿಟ್ಟು ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ, ಅಥವಾ ಟೈಪ್ ಮಾಡದೆ ಮುಂದುವರಿಯಲು 1-ಟ್ಯಾಪ್ ಕಾರ್ಡ್ ಒತ್ತಿ.',
+          ml: 'തിരിച്ചറിയൽ പരിശോധന. നിങ്ങളുടെ മൊബൈൽ നമ്പർ സ്ഥിരീകരിക്കുക, അല്ലെങ്കിൽ ടൈപ്പ് ചെയ്യാതെ തുടരാൻ 1-ടാപ്പ് കാർഡ് അമർത്തുക.',
+        };
+        speak(identityPrompts[language] || identityPrompts['en']);
       }, 400);
       return () => {
         clearTimeout(timer);
         stopSpeaking();
       };
     }
-  }, [accessibility.voiceGuidance, accessibility.easyMode, speak, stopSpeaking]);
+  }, [accessibility.voiceGuidance, accessibility.easyMode, speak, stopSpeaking, language]);
 
   const handleSimulateVerify = () => {
     setIsVerifying(true);

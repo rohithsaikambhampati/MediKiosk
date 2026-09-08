@@ -12,7 +12,7 @@ import { cn } from '../../utils/cn';
 
 export const PatientConsentPage: React.FC = () => {
   const navigate = useNavigate();
-  const { consent, setConsent, accessibility, speak, t } = usePatientIntake();
+  const { consent, setConsent, accessibility, speak, t, language } = usePatientIntake();
   const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
   const [isDisagreeModalOpen, setIsDisagreeModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,10 +20,18 @@ export const PatientConsentPage: React.FC = () => {
   const isMandatoryAgreed = consent.voice && consent.documents && consent.aiProcessing && consent.hospitalSharing;
 
   const handleListenConsent = () => {
-    speak(
-      "Before we begin: We will ask you questions about your symptoms and scan your medical documents. Your health information will only be shared with your attending doctor. Please tap I Agree to All to proceed.",
-      true
-    );
+    const consentPrompts: Record<string, string> = {
+      en: 'Before we begin: We will ask you questions about your symptoms and scan your medical documents. Your health information will only be shared with your attending doctor. Please tap I Agree to proceed.',
+      hi: 'शुरू करने से पहले: हम आपसे आपके लक्षणों के बारे में पूछेंगे और आपके मेडिकल दस्तावेज़ों को स्कैन करेंगे। आपकी जानकारी केवल आपके डॉक्टर के साथ साझा की जाएगी।',
+      te: 'ప్రారంభించే ముందు: మేము మీ లక్షణాల గురించి అడుగుతాము మరియు మీ వైద్య పత్రాలను స్కాన్ చేస్తాము. మీ సమాచారం మీ వైద్యుడికి మాత్రమే అందించబడుతుంది.',
+      ta: 'தொடங்குவதற்கு முன்: உங்கள் அறிகுறிகளைப் பற்றி கேட்டு மருத்துவ ஆவணங்களை ஸ்கேன் செய்வோம். உங்கள் விவரங்கள் உங்கள் மருத்துவருக்கு மட்டுமே பகிரப்படும்.',
+      bn: 'শুরু করার আগে: আমরা আপনার লক্ষণ সম্পর্কে জিজ্ঞাসা করব এবং মেডিকেল নথি স্ক্যান করব। আপনার তথ্য কেবল ডাক্তারের সাথে শেয়ার করা হবে।',
+      mr: 'सुरू करण्यापूर्वी: आम्ही तुम्हाला तुमच्या लक्षणांबद्दल विचारू आणि तुमचे वैद्यकीय दस्तऐवज स्कॅन करू. तुमची माहिती केवळ तुमच्या डॉक्टरांशी शेअर केली जाईल.',
+      gu: 'શરૂ કરતા પહેલા: અમે તમને તમારા લક્ષણો વિશે પૂછીશું અને તમારા મેડિકલ દસ્તાવેજો સ્કેન કરીશું. તમારી માહિતી ફક્ત તમારા ડૉક્ટર સાથે શેર કરવામાં આવશે.',
+      kn: 'ಪ್ರಾರಂಭಿಸುವ ಮೊದಲು: ನಾವು ನಿಮ್ಮ ರೋಗಲಕ್ಷಣಗಳ ಬಗ್ಗೆ ಕೇಳುತ್ತೇವೆ ಮತ್ತು ನಿಮ್ಮ ವೈದ್ಯಕೀಯ ದಾಖಲೆಗಳನ್ನು ಸ್ಕ್ಯಾನ್ ಮಾಡುತ್ತೇವೆ. ನಿಮ್ಮ ವಿವರಗಳನ್ನು ನಿಮ್ಮ ವೈದ್ಯರೊಂದಿಗೆ ಮಾತ್ರ ಹಂಚಿಕೊಳ್ಳಲಾಗುತ್ತದೆ.',
+      ml: 'തുടങ്ങുന്നതിന് മുമ്പ്: നിങ്ങളുടെ ലക്ഷണങ്ങളെക്കുറിച്ച് ചോദിക്കുകയും മെഡിക്കൽ രേഖകൾ സ്കാൻ ചെയ്യുകയും ചെയ്യും. വിവരങ്ങൾ ഡോക്ടറുമായി മാത്രമേ പങ്കിടൂ.',
+    };
+    speak(consentPrompts[language] || consentPrompts['en'], true);
   };
 
   const handleToggleConsent = (key: keyof typeof consent) => {

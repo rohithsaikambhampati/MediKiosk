@@ -216,38 +216,70 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
   const questions = getClinicalQuestions(language);
   const voiceConfig = LANGUAGE_VOICE_MAP[language] || LANGUAGE_VOICE_MAP['en'];
 
-  // Ref to always hold latest accessibility so speak() never reads stale closure values
+  // Refs to hold latest settings so speak() never reads stale closure values
   const accessibilityRef = React.useRef(accessibility);
+  const languageRef = React.useRef(language);
+  const activeAudioRef = React.useRef<HTMLAudioElement | null>(null);
+
   React.useEffect(() => {
     accessibilityRef.current = accessibility;
   }, [accessibility]);
 
+  React.useEffect(() => {
+    languageRef.current = language;
+  }, [language]);
+
+  const stopSpeaking = useCallback(() => {
+    if (activeAudioRef.current) {
+      activeAudioRef.current.pause();
+      activeAudioRef.current = null;
+    }
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsSpeaking(false);
+    setCurrentSpeakingText('');
+  }, []);
+
   const speak = useCallback(
     (text: string, force = false) => {
-      if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+      if (typeof window === 'undefined') return;
       if (!force && !accessibilityRef.current.voiceGuidance && !accessibilityRef.current.easyMode) return;
 
-      try {
-        window.speechSynthesis.cancel();
-        const cleanText = text.replace(/["“”«»]/g, '').trim();
-        if (!cleanText) return;
+      stopSpeaking();
 
-        // Chromium speech engine timing fix
+      const cleanText = text.replace(/["“”«»]/g, '').trim();
+      if (!cleanText) return;
+
+      const currentLang = languageRef.current || 'en';
+      const voiceCfg = LANGUAGE_VOICE_MAP[currentLang] || LANGUAGE_VOICE_MAP['en'];
+      const bcp47 = voiceCfg?.bcp47 || 'en-IN';
+      const targetLangCode = currentLang;
+      const targetLangPrefix = bcp47.split('-')[0].toLowerCase();
+
+      // Check if browser Web Speech API has a voice matching the target language
+      const voices = 'speechSynthesis' in window ? window.speechSynthesis.getVoices() : [];
+      const matchedVoice = voices.find((v) => {
+        const vLang = (v.lang || '').toLowerCase().replace('_', '-');
+        const vName = (v.name || '').toLowerCase();
+        return (
+          vLang === bcp47.toLowerCase() ||
+          vLang.startsWith(targetLangPrefix) ||
+          vName.includes(targetLangCode) ||
+          vName.includes(targetLangPrefix)
+        );
+      });
+
+      // Try browser WebSpeech first if matching voice is available or language is English
+      if ('speechSynthesis' in window && (matchedVoice || targetLangPrefix === 'en')) {
         setTimeout(() => {
           try {
             const utterance = new SpeechSynthesisUtterance(cleanText);
-            const bcp47 = voiceConfig?.bcp47 || 'en-IN';
             utterance.lang = bcp47;
-            utterance.rate = 0.88; // Slightly deliberate for elderly/accessible listening
+            utterance.rate = 0.88;
 
-            const voices = window.speechSynthesis.getVoices();
-            if (voices && voices.length > 0) {
-              const matchedVoice =
-                voices.find((v) => v.lang === bcp47) ||
-                voices.find((v) => v.lang.replace('_', '-').startsWith(bcp47.split('-')[0]));
-              if (matchedVoice) {
-                utterance.voice = matchedVoice;
-              }
+            if (matchedVoice) {
+              utterance.voice = matchedVoice;
             }
 
             utterance.onstart = () => {
@@ -269,21 +301,49 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
             setIsSpeaking(false);
           }
         }, 50);
-      } catch (err) {
-        console.warn('Speech synthesis error:', err);
-        setIsSpeaking(false);
+      } else {
+        // High-fidelity fallback audio TTS for Indian regional languages
+        try {
+          const fallbackUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=${targetLangCode}&client=tw-ob`;
+          const audio = new Audio(fallbackUrl);
+          activeAudioRef.current = audio;
+
+          audio.onplay = () => {
+            setIsSpeaking(true);
+            setCurrentSpeakingText(cleanText);
+          };
+          audio.onended = () => {
+            setIsSpeaking(false);
+            setCurrentSpeakingText('');
+            activeAudioRef.current = null;
+          };
+          audio.onerror = () => {
+            // Fallback to basic WebSpeech if network audio fails
+            if ('speechSynthesis' in window) {
+              const utt = new SpeechSynthesisUtterance(cleanText);
+              utt.lang = bcp47;
+              window.speechSynthesis.speak(utt);
+            } else {
+              setIsSpeaking(false);
+            }
+          };
+
+          audio.play().catch(() => {
+            // Touch autoplay block fallback
+            if ('speechSynthesis' in window) {
+              const utt = new SpeechSynthesisUtterance(cleanText);
+              utt.lang = bcp47;
+              window.speechSynthesis.speak(utt);
+            }
+          });
+        } catch (err) {
+          console.warn('Fallback audio playback error:', err);
+          setIsSpeaking(false);
+        }
       }
     },
-    [voiceConfig]
+    [stopSpeaking]
   );
-
-  const stopSpeaking = useCallback(() => {
-    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      setIsSpeaking(false);
-      setCurrentSpeakingText('');
-    }
-  }, []);
 
   const setEasyMode = (enabled: boolean) => {
     setAccessibility((prev) => ({
