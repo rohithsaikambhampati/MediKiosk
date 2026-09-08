@@ -9,29 +9,33 @@ export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement
 }
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ label, description, isKiosk = false, className, checked, ...props }, ref) => {
+  ({ label, description, isKiosk = false, className, checked, onChange, ...props }, ref) => {
     return (
-      <label className={cn('inline-flex items-start gap-3 select-none cursor-pointer', className)}>
-        <div className="relative flex items-center mt-0.5">
+      <label className={cn('inline-flex items-center gap-3 select-none cursor-pointer p-1 touch-manipulation', className)}>
+        <div className="relative flex items-center shrink-0">
           <input
             ref={ref}
             type="checkbox"
             checked={checked}
+            onChange={onChange}
             className="peer sr-only"
             {...props}
           />
           <div
             className={cn(
-              'border border-clinical-strong bg-white rounded transition-colors peer-checked:bg-brand-700 peer-checked:border-brand-700 flex items-center justify-center text-white peer-focus-visible:ring-2 peer-focus-visible:ring-brand-500',
-              isKiosk ? 'w-6 h-6 rounded-md' : 'w-4 h-4'
+              'border-2 transition-all rounded-lg flex items-center justify-center text-white cursor-pointer shadow-xs',
+              checked
+                ? 'bg-emerald-600 border-emerald-700'
+                : 'bg-white border-slate-400 hover:border-slate-700',
+              isKiosk ? 'w-8 h-8 rounded-xl' : 'w-6 h-6'
             )}
           >
-            <Check className={cn('stroke-[3]', isKiosk ? 'w-4 h-4' : 'w-3 h-3', checked ? 'opacity-100' : 'opacity-0')} />
+            <Check className={cn('stroke-[3.5] transition-opacity', isKiosk ? 'w-5 h-5' : 'w-4 h-4', checked ? 'opacity-100' : 'opacity-0')} />
           </div>
         </div>
         {(label || description) && (
           <div className="flex flex-col">
-            {label && <span className={cn('font-medium text-clinical-navy', isKiosk ? 'text-lg' : 'text-sm')}>{label}</span>}
+            {label && <span className={cn('font-bold text-clinical-navy', isKiosk ? 'text-lg' : 'text-sm')}>{label}</span>}
             {description && <span className="text-xs text-clinical-muted">{description}</span>}
           </div>
         )}
@@ -41,3 +45,4 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 );
 
 Checkbox.displayName = 'Checkbox';
+

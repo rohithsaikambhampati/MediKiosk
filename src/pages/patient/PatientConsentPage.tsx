@@ -118,113 +118,203 @@ export const PatientConsentPage: React.FC = () => {
       {/* Permission Cards */}
       <div className="space-y-3 mb-6">
         {/* Voice Intake */}
-        <Card variant="default" padding="md" className="flex items-center justify-between gap-4 bg-white border-clinical-border">
+        <Card
+          variant="interactive"
+          padding="md"
+          onClick={() => handleToggleConsent('voice')}
+          className={cn(
+            'flex items-center justify-between gap-4 transition-all cursor-pointer select-none',
+            consent.voice
+              ? 'bg-emerald-50/70 border-2 border-emerald-600 shadow-xs'
+              : 'bg-white border border-slate-300 hover:border-slate-400'
+          )}
+        >
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-full bg-slate-100 text-brand-700 flex items-center justify-center shrink-0 mt-0.5">
-              <Mic className="w-5 h-5" />
+            <div
+              className={cn(
+                'w-11 h-11 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-colors',
+                consent.voice ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-brand-700'
+              )}
+            >
+              <Mic className="w-5.5 h-5.5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-sm text-clinical-navy">{t('consent.voiceTitle')}</span>
-                <span className="text-[10px] uppercase font-bold text-red-700 bg-red-50 border border-red-200 px-1.5 py-0.2 rounded">
+                <span className="font-bold text-base sm:text-lg text-clinical-navy">{t('consent.voiceTitle')}</span>
+                <span className="text-[10px] uppercase font-black text-red-700 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded">
                   {t('btn.required')}
                 </span>
               </div>
-              <p className="text-xs text-clinical-muted mt-0.5">{t('consent.voiceDesc')}</p>
+              <p className="text-xs sm:text-sm text-clinical-muted mt-0.5 font-medium">{t('consent.voiceDesc')}</p>
             </div>
           </div>
-          <Checkbox
-            checked={consent.voice}
-            onChange={() => handleToggleConsent('voice')}
-          />
+          <div className="shrink-0 pointer-events-none">
+            <Checkbox
+              checked={consent.voice}
+              isKiosk={accessibility.easyMode}
+              readOnly
+            />
+          </div>
         </Card>
 
         {/* Document Upload */}
-        <Card variant="default" padding="md" className="flex items-center justify-between gap-4 bg-white border-clinical-border">
+        <Card
+          variant="interactive"
+          padding="md"
+          onClick={() => handleToggleConsent('documents')}
+          className={cn(
+            'flex items-center justify-between gap-4 transition-all cursor-pointer select-none',
+            consent.documents
+              ? 'bg-emerald-50/70 border-2 border-emerald-600 shadow-xs'
+              : 'bg-white border border-slate-300 hover:border-slate-400'
+          )}
+        >
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-full bg-slate-100 text-brand-700 flex items-center justify-center shrink-0 mt-0.5">
-              <FileText className="w-5 h-5" />
+            <div
+              className={cn(
+                'w-11 h-11 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-colors',
+                consent.documents ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-brand-700'
+              )}
+            >
+              <FileText className="w-5.5 h-5.5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-sm text-clinical-navy">{t('consent.docsTitle')}</span>
-                <span className="text-[10px] uppercase font-bold text-red-700 bg-red-50 border border-red-200 px-1.5 py-0.2 rounded">
+                <span className="font-bold text-base sm:text-lg text-clinical-navy">{t('consent.docsTitle')}</span>
+                <span className="text-[10px] uppercase font-black text-red-700 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded">
                   {t('btn.required')}
                 </span>
               </div>
-              <p className="text-xs text-clinical-muted mt-0.5">{t('consent.docsDesc')}</p>
+              <p className="text-xs sm:text-sm text-clinical-muted mt-0.5 font-medium">{t('consent.docsDesc')}</p>
             </div>
           </div>
-          <Checkbox
-            checked={consent.documents}
-            onChange={() => handleToggleConsent('documents')}
-          />
+          <div className="shrink-0 pointer-events-none">
+            <Checkbox
+              checked={consent.documents}
+              isKiosk={accessibility.easyMode}
+              readOnly
+            />
+          </div>
         </Card>
 
         {/* AI Structuring */}
-        <Card variant="default" padding="md" className="flex items-center justify-between gap-4 bg-white border-clinical-border">
+        <Card
+          variant="interactive"
+          padding="md"
+          onClick={() => handleToggleConsent('aiProcessing')}
+          className={cn(
+            'flex items-center justify-between gap-4 transition-all cursor-pointer select-none',
+            consent.aiProcessing
+              ? 'bg-emerald-50/70 border-2 border-emerald-600 shadow-xs'
+              : 'bg-white border border-slate-300 hover:border-slate-400'
+          )}
+        >
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-full bg-slate-100 text-brand-700 flex items-center justify-center shrink-0 mt-0.5">
-              <Cpu className="w-5 h-5" />
+            <div
+              className={cn(
+                'w-11 h-11 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-colors',
+                consent.aiProcessing ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-brand-700'
+              )}
+            >
+              <Cpu className="w-5.5 h-5.5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-sm text-clinical-navy">{t('consent.aiTitle')}</span>
-                <span className="text-[10px] uppercase font-bold text-red-700 bg-red-50 border border-red-200 px-1.5 py-0.2 rounded">
+                <span className="font-bold text-base sm:text-lg text-clinical-navy">{t('consent.aiTitle')}</span>
+                <span className="text-[10px] uppercase font-black text-red-700 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded">
                   {t('btn.required')}
                 </span>
               </div>
-              <p className="text-xs text-clinical-muted mt-0.5">{t('consent.aiDesc')}</p>
+              <p className="text-xs sm:text-sm text-clinical-muted mt-0.5 font-medium">{t('consent.aiDesc')}</p>
             </div>
           </div>
-          <Checkbox
-            checked={consent.aiProcessing}
-            onChange={() => handleToggleConsent('aiProcessing')}
-          />
+          <div className="shrink-0 pointer-events-none">
+            <Checkbox
+              checked={consent.aiProcessing}
+              isKiosk={accessibility.easyMode}
+              readOnly
+            />
+          </div>
         </Card>
 
         {/* Hospital Sharing */}
-        <Card variant="default" padding="md" className="flex items-center justify-between gap-4 bg-white border-clinical-border">
+        <Card
+          variant="interactive"
+          padding="md"
+          onClick={() => handleToggleConsent('hospitalSharing')}
+          className={cn(
+            'flex items-center justify-between gap-4 transition-all cursor-pointer select-none',
+            consent.hospitalSharing
+              ? 'bg-emerald-50/70 border-2 border-emerald-600 shadow-xs'
+              : 'bg-white border border-slate-300 hover:border-slate-400'
+          )}
+        >
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-full bg-slate-100 text-brand-700 flex items-center justify-center shrink-0 mt-0.5">
-              <Building2 className="w-5 h-5" />
+            <div
+              className={cn(
+                'w-11 h-11 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-colors',
+                consent.hospitalSharing ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-brand-700'
+              )}
+            >
+              <Building2 className="w-5.5 h-5.5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-sm text-clinical-navy">{t('consent.sharingTitle')}</span>
-                <span className="text-[10px] uppercase font-bold text-red-700 bg-red-50 border border-red-200 px-1.5 py-0.2 rounded">
+                <span className="font-bold text-base sm:text-lg text-clinical-navy">{t('consent.sharingTitle')}</span>
+                <span className="text-[10px] uppercase font-black text-red-700 bg-red-50 border border-red-200 px-1.5 py-0.5 rounded">
                   {t('btn.required')}
                 </span>
               </div>
-              <p className="text-xs text-clinical-muted mt-0.5">{t('consent.sharingDesc')}</p>
+              <p className="text-xs sm:text-sm text-clinical-muted mt-0.5 font-medium">{t('consent.sharingDesc')}</p>
             </div>
           </div>
-          <Checkbox
-            checked={consent.hospitalSharing}
-            onChange={() => handleToggleConsent('hospitalSharing')}
-          />
+          <div className="shrink-0 pointer-events-none">
+            <Checkbox
+              checked={consent.hospitalSharing}
+              isKiosk={accessibility.easyMode}
+              readOnly
+            />
+          </div>
         </Card>
 
         {/* ABHA Linking (Optional) */}
-        <Card variant="default" padding="md" className="flex items-center justify-between gap-4 bg-white border-clinical-border">
+        <Card
+          variant="interactive"
+          padding="md"
+          onClick={() => handleToggleConsent('abhaLinking')}
+          className={cn(
+            'flex items-center justify-between gap-4 transition-all cursor-pointer select-none',
+            consent.abhaLinking
+              ? 'bg-indigo-50/70 border-2 border-indigo-600 shadow-xs'
+              : 'bg-white border border-slate-300 hover:border-slate-400'
+          )}
+        >
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-full bg-indigo-50 text-indigo-700 flex items-center justify-center shrink-0 mt-0.5">
-              <Link2 className="w-5 h-5" />
+            <div
+              className={cn(
+                'w-11 h-11 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-colors',
+                consent.abhaLinking ? 'bg-indigo-600 text-white' : 'bg-indigo-50 text-indigo-700'
+              )}
+            >
+              <Link2 className="w-5.5 h-5.5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-sm text-clinical-navy">{t('consent.abhaTitle')}</span>
-                <span className="text-[10px] uppercase font-bold text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-0.2 rounded">
+                <span className="font-bold text-base sm:text-lg text-clinical-navy">{t('consent.abhaTitle')}</span>
+                <span className="text-[10px] uppercase font-black text-slate-600 bg-slate-100 border border-slate-200 px-1.5 py-0.5 rounded">
                   {t('btn.optional')}
                 </span>
               </div>
-              <p className="text-xs text-clinical-muted mt-0.5">{t('consent.abhaDesc')}</p>
+              <p className="text-xs sm:text-sm text-clinical-muted mt-0.5 font-medium">{t('consent.abhaDesc')}</p>
             </div>
           </div>
-          <Checkbox
-            checked={consent.abhaLinking}
-            onChange={() => handleToggleConsent('abhaLinking')}
-          />
+          <div className="shrink-0 pointer-events-none">
+            <Checkbox
+              checked={consent.abhaLinking}
+              isKiosk={accessibility.easyMode}
+              readOnly
+            />
+          </div>
         </Card>
       </div>
 
