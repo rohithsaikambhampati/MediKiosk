@@ -21,6 +21,7 @@ export const PatientHeader: React.FC = () => {
     speak,
     stopSpeaking,
     requestStaffAssistance,
+    resetIntake,
     t,
   } = usePatientIntake();
   const [isLangModalOpen, setIsLangModalOpen] = useState(false);
@@ -53,9 +54,14 @@ export const PatientHeader: React.FC = () => {
         {/* Left: Brand Logo & Wordmark */}
         <div
           className="flex items-center gap-3 cursor-pointer select-none"
-          onClick={() => navigate(PATIENT_ROUTES.WELCOME)}
+          onClick={() => {
+            stopSpeaking();
+            resetIntake();
+            navigate('/');
+          }}
+          title="Return to Main Portal"
         >
-          <div className="w-10 h-10 rounded-clinical bg-brand-700 text-white flex items-center justify-center font-extrabold text-xl shadow-sm">
+          <div className="w-10 h-10 rounded-clinical bg-brand-700 text-white flex items-center justify-center font-extrabold text-xl shadow-sm hover:scale-105 transition-transform">
             MK
           </div>
           <div>
@@ -151,13 +157,17 @@ export const PatientHeader: React.FC = () => {
             onClick={() => requestStaffAssistance('Need Help tapped on top bar')}
           />
 
-          {/* Exit */}
+          {/* Exit Kiosk Button */}
           <Button
             variant="outline"
             size="sm"
             leftIcon={LogOut}
-            onClick={() => navigate(PATIENT_ROUTES.WELCOME)}
-            className="hidden sm:inline-flex"
+            onClick={() => {
+              stopSpeaking();
+              resetIntake();
+              navigate('/');
+            }}
+            className="flex items-center text-slate-700 hover:text-red-700 hover:border-red-300 font-bold"
           >
             {t('header.exitKiosk')}
           </Button>

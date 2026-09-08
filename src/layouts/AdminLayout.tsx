@@ -105,9 +105,9 @@ export const AdminLayoutContent: React.FC = () => {
             </div>
           </div>
           <button
-            onClick={() => navigate(ADMIN_ROUTES.LOGIN)}
-            className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800"
-            title="Sign Out"
+            onClick={() => navigate('/')}
+            className="text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800 transition-colors"
+            title="Exit to Main Portal"
           >
             <LogOut className="w-4 h-4" />
           </button>

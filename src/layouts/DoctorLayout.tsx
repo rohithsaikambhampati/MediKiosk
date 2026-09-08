@@ -245,11 +245,12 @@ const DoctorLayoutContent: React.FC = () => {
             </div>
 
             <button
-              onClick={() => navigate(DOCTOR_ROUTES.LOGIN)}
-              className="text-xs font-semibold text-clinical-slate hover:text-red-600 flex items-center gap-1.5 px-2.5 py-1 rounded hover:bg-slate-100 ml-1"
+              onClick={() => navigate('/')}
+              className="text-xs font-semibold text-clinical-slate hover:text-red-600 flex items-center gap-1.5 px-2.5 py-1 rounded hover:bg-slate-100 ml-1 transition-colors"
+              title="Exit to Main Portal"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Logout</span>
+              <span className="hidden sm:inline">Exit to Home</span>
             </button>
           </div>
         </header>
