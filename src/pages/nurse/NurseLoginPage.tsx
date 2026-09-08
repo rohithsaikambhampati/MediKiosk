@@ -59,6 +59,20 @@ export const NurseLoginPage: React.FC = () => {
   return (
     <CenteredTaskLayout maxWidth="sm">
       <Card variant="default" padding="lg" className="bg-white border-2 border-sky-300 shadow-xl space-y-6">
+        {/* Top Exit / Back to Home navigation */}
+        <div className="flex items-center justify-between">
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-sky-800 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+            title="Return to Main Portal"
+          >
+            <ArrowRight className="w-3.5 h-3.5 rotate-180" />
+            <span>Exit to Home</span>
+          </button>
+          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Triage Gate</span>
+        </div>
+
         {/* Header Branding */}
         <div className="text-center space-y-2">
           <div className="w-14 h-14 rounded-2xl bg-sky-700 text-white flex items-center justify-center mx-auto shadow-md">

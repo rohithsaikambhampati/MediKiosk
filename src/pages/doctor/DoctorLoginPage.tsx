@@ -81,6 +81,20 @@ export const DoctorLoginPage: React.FC = () => {
 
         {/* Login Card */}
         <Card variant="default" padding="lg" className="bg-white border-slate-200 shadow-2xl space-y-5">
+          {/* Top Exit / Back to Home navigation */}
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => navigate('/')}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-brand-700 bg-slate-100 hover:bg-slate-200 px-3 py-1.5 rounded-lg transition-colors cursor-pointer"
+              title="Return to Main Portal"
+            >
+              <ArrowRight className="w-3.5 h-3.5 rotate-180" />
+              <span>Exit to Home</span>
+            </button>
+            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Doctor Gate</span>
+          </div>
+
           <div className="space-y-1 text-center">
             <h2 className="text-xl font-extrabold text-clinical-navy">Clinical Portal Sign In</h2>
             <p className="text-xs text-clinical-muted">
