@@ -175,12 +175,18 @@ export const PatientReviewPage: React.FC = () => {
       </div>
 
       {/* Confirmation Checkbox Card */}
-      <Card variant="default" padding="md" className="bg-brand-50 border-brand-200 mb-6">
+      <Card
+        variant="interactive"
+        padding="md"
+        onClick={() => setIsReviewConfirmed(!isReviewConfirmed)}
+        className="bg-brand-50 border-2 border-brand-200 hover:border-brand-400 mb-6 cursor-pointer select-none transition-all"
+      >
         <div className="flex items-start gap-3">
           <Checkbox
             checked={isReviewConfirmed}
             onChange={() => setIsReviewConfirmed(!isReviewConfirmed)}
-            className="mt-0.5"
+            isKiosk={accessibility.easyMode}
+            className="mt-0.5 shrink-0"
           />
           <div className="text-xs text-brand-950 font-medium leading-relaxed">
             <strong className="font-extrabold block text-sm mb-0.5">

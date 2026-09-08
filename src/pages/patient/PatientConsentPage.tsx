@@ -148,11 +148,11 @@ export const PatientConsentPage: React.FC = () => {
               <p className="text-xs sm:text-sm text-clinical-muted mt-0.5 font-medium">{t('consent.voiceDesc')}</p>
             </div>
           </div>
-          <div className="shrink-0 pointer-events-none">
+          <div className="shrink-0">
             <Checkbox
               checked={consent.voice}
+              onChange={() => handleToggleConsent('voice')}
               isKiosk={accessibility.easyMode}
-              readOnly
             />
           </div>
         </Card>
@@ -188,11 +188,11 @@ export const PatientConsentPage: React.FC = () => {
               <p className="text-xs sm:text-sm text-clinical-muted mt-0.5 font-medium">{t('consent.docsDesc')}</p>
             </div>
           </div>
-          <div className="shrink-0 pointer-events-none">
+          <div className="shrink-0">
             <Checkbox
               checked={consent.documents}
+              onChange={() => handleToggleConsent('documents')}
               isKiosk={accessibility.easyMode}
-              readOnly
             />
           </div>
         </Card>
@@ -228,11 +228,11 @@ export const PatientConsentPage: React.FC = () => {
               <p className="text-xs sm:text-sm text-clinical-muted mt-0.5 font-medium">{t('consent.aiDesc')}</p>
             </div>
           </div>
-          <div className="shrink-0 pointer-events-none">
+          <div className="shrink-0">
             <Checkbox
               checked={consent.aiProcessing}
+              onChange={() => handleToggleConsent('aiProcessing')}
               isKiosk={accessibility.easyMode}
-              readOnly
             />
           </div>
         </Card>
@@ -268,11 +268,11 @@ export const PatientConsentPage: React.FC = () => {
               <p className="text-xs sm:text-sm text-clinical-muted mt-0.5 font-medium">{t('consent.sharingDesc')}</p>
             </div>
           </div>
-          <div className="shrink-0 pointer-events-none">
+          <div className="shrink-0">
             <Checkbox
               checked={consent.hospitalSharing}
+              onChange={() => handleToggleConsent('hospitalSharing')}
               isKiosk={accessibility.easyMode}
-              readOnly
             />
           </div>
         </Card>
@@ -308,11 +308,11 @@ export const PatientConsentPage: React.FC = () => {
               <p className="text-xs sm:text-sm text-clinical-muted mt-0.5 font-medium">{t('consent.abhaDesc')}</p>
             </div>
           </div>
-          <div className="shrink-0 pointer-events-none">
+          <div className="shrink-0">
             <Checkbox
               checked={consent.abhaLinking}
+              onChange={() => handleToggleConsent('abhaLinking')}
               isKiosk={accessibility.easyMode}
-              readOnly
             />
           </div>
         </Card>
@@ -363,6 +363,7 @@ export const PatientConsentPage: React.FC = () => {
                   documents: true,
                   aiProcessing: true,
                   hospitalSharing: true,
+                  abhaLinking: prev.abhaLinking || false,
                 }));
                 handleAgree();
               }}

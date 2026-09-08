@@ -9,15 +9,22 @@ export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement
 }
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ label, description, isKiosk = false, className, checked, onChange, ...props }, ref) => {
+  ({ label, description, isKiosk = false, className, checked, onChange, onClick, ...props }, ref) => {
     return (
-      <label className={cn('inline-flex items-center gap-3 select-none cursor-pointer p-1 touch-manipulation', className)}>
+      <label
+        className={cn(
+          'inline-flex items-center gap-3 select-none cursor-pointer p-1 touch-manipulation',
+          isKiosk && 'min-h-[44px]',
+          className
+        )}
+      >
         <div className="relative flex items-center shrink-0">
           <input
             ref={ref}
             type="checkbox"
             checked={checked}
             onChange={onChange}
+            onClick={onClick}
             className="peer sr-only"
             {...props}
           />
@@ -27,10 +34,10 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
               checked
                 ? 'bg-emerald-600 border-emerald-700'
                 : 'bg-white border-slate-400 hover:border-slate-700',
-              isKiosk ? 'w-8 h-8 rounded-xl' : 'w-6 h-6'
+              isKiosk ? 'w-9 h-9 rounded-xl' : 'w-6 h-6'
             )}
           >
-            <Check className={cn('stroke-[3.5] transition-opacity', isKiosk ? 'w-5 h-5' : 'w-4 h-4', checked ? 'opacity-100' : 'opacity-0')} />
+            <Check className={cn('stroke-[3.5] transition-opacity', isKiosk ? 'w-6 h-6' : 'w-4 h-4', checked ? 'opacity-100' : 'opacity-0')} />
           </div>
         </div>
         {(label || description) && (

@@ -84,7 +84,7 @@ export const PatientIdentityPage: React.FC = () => {
       )}
 
       {/* Identity Method Selector */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
         <button
           type="button"
           onClick={() => {
@@ -92,14 +92,14 @@ export const PatientIdentityPage: React.FC = () => {
             setInputValue('9876543210');
           }}
           className={cn(
-            'flex flex-col items-center gap-1.5 p-3 rounded-clinical border-2 font-bold text-xs transition-all',
+            'flex items-center justify-center gap-2.5 p-3.5 rounded-clinical border-2 font-bold text-xs sm:text-sm transition-all',
             tab === 'phone'
-              ? 'border-brand-700 bg-brand-50 text-brand-900 shadow-sm'
-              : 'border-clinical-border bg-white text-clinical-slate'
+              ? 'border-brand-700 bg-brand-50 text-brand-900 shadow-sm ring-1 ring-brand-700'
+              : 'border-clinical-border bg-white text-clinical-slate hover:border-brand-300'
           )}
         >
-          <Phone className="w-5 h-5 text-brand-700" />
-          <span>{t('identity.tabPhone')}</span>
+          <Phone className="w-5 h-5 text-brand-700 shrink-0" />
+          <span className="truncate">{t('identity.tabPhone')}</span>
         </button>
 
         <button
@@ -109,14 +109,14 @@ export const PatientIdentityPage: React.FC = () => {
             setInputValue('MRN-90214');
           }}
           className={cn(
-            'flex flex-col items-center gap-1.5 p-3 rounded-clinical border-2 font-bold text-xs transition-all',
+            'flex items-center justify-center gap-2.5 p-3.5 rounded-clinical border-2 font-bold text-xs sm:text-sm transition-all',
             tab === 'mrn'
-              ? 'border-brand-700 bg-brand-50 text-brand-900 shadow-sm'
-              : 'border-clinical-border bg-white text-clinical-slate'
+              ? 'border-brand-700 bg-brand-50 text-brand-900 shadow-sm ring-1 ring-brand-700'
+              : 'border-clinical-border bg-white text-clinical-slate hover:border-brand-300'
           )}
         >
-          <CreditCard className="w-5 h-5 text-brand-700" />
-          <span>{t('identity.tabMrn')}</span>
+          <CreditCard className="w-5 h-5 text-brand-700 shrink-0" />
+          <span className="truncate">{t('identity.tabMrn')}</span>
         </button>
 
         <button
@@ -126,14 +126,14 @@ export const PatientIdentityPage: React.FC = () => {
             setInputValue('91-8841-2026-90');
           }}
           className={cn(
-            'flex flex-col items-center gap-1.5 p-3 rounded-clinical border-2 font-bold text-xs transition-all',
+            'flex items-center justify-center gap-2.5 p-3.5 rounded-clinical border-2 font-bold text-xs sm:text-sm transition-all',
             tab === 'abha'
-              ? 'border-brand-700 bg-brand-50 text-brand-900 shadow-sm'
-              : 'border-clinical-border bg-white text-clinical-slate'
+              ? 'border-brand-700 bg-brand-50 text-brand-900 shadow-sm ring-1 ring-brand-700'
+              : 'border-clinical-border bg-white text-clinical-slate hover:border-brand-300'
           )}
         >
-          <Link2 className="w-5 h-5 text-brand-700" />
-          <span>{t('identity.tabAbha')}</span>
+          <Link2 className="w-5 h-5 text-brand-700 shrink-0" />
+          <span className="truncate">{t('identity.tabAbha')}</span>
         </button>
       </div>
 
