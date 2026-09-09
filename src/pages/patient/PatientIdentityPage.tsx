@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PATIENT_ROUTES } from '../../constants/routes';
-import { usePatientIntake } from '../../context/PatientIntakeContext';
+import { usePatientIntake, PatientIdentity } from '../../context/PatientIntakeContext';
 import { PageContainer } from '../../components/common/containers/LayoutContainers';
 import { Button } from '../../components/common/Button';
 import { Card } from '../../components/common/Card';
 import { Input } from '../../components/common/Input';
 import { Avatar } from '../../components/common/Avatar';
-import { Phone, CreditCard, Link2, CheckCircle2, ArrowRight, ArrowLeft, HelpCircle } from 'lucide-react';
+import { Phone, CreditCard, Link2, CheckCircle2, ArrowRight, ArrowLeft, HelpCircle, UserPlus, UserCheck } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
 export const PatientIdentityPage: React.FC = () => {
@@ -17,19 +17,20 @@ export const PatientIdentityPage: React.FC = () => {
   const [inputValue, setInputValue] = useState('9876543210');
   const [isVerifying, setIsVerifying] = useState(false);
 
+  // New patient registration state for unrecognized phone numbers / MRNs
+  const [showNewPatientForm, setShowNewPatientForm] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newAge, setNewAge] = useState('32');
+  const [newGender, setNewGender] = useState<'male' | 'female' | 'other'>('male');
+  const [newDept, setNewDept] = useState('General Medicine');
+
   React.useEffect(() => {
     if (accessibility.voiceGuidance || accessibility.easyMode) {
       const timer = setTimeout(() => {
         const identityPrompts: Record<string, string> = {
-          en: 'Identity verification. Please verify your mobile number, or tap the quick check-in card to continue without typing.',
-          hi: 'पहचान सत्यापन। कृपया अपना मोबाइल नंबर सत्यापित करें, या बिना टाइप किए आगे बढ़ने के लिए 1-टैप कार्ड दबाएं।',
-          te: 'గుర్తింపు సరిచూడటం. దయచేసి మీ మొబైల్ సంఖ్యను ధృవీకరించండి, లేదా టైప్ చేయకుండా కొనసాగడానికి 1-ట్యాప్ కార్డ్‌ను నొక్కండి.',
-          ta: 'அடையாளச் சரிபார்ப்பு. உங்கள் மொபைல் எண்ணைச் சரிபார்க்கவும், அல்லது தட்டச்சு செய்யாமல் தொடர 1-டேப் கார்டைத் தட்டவும்.',
-          bn: 'পরিচয় যাচাইকরণ। অনুগ্রহ করে আপনার মোবাইল নম্বর যাচাই করুন, অথবা টাইপ না করে এগিয়ে যেতে ১-ট্যাপ কার্ডটি চাপুন।',
-          mr: 'ओळख पडताळणी. कृपया आपला मोबाईल नंबर सत्यापित करा, किंवा न टाईप करता पुढे जाण्यासाठी 1-टॅप कार्ड दाबा.',
-          gu: 'ઓળખ ચકાસણી. કૃપા કરીને તમારો મોબાઇલ નંબર ચકાસો, અથવા ટાઇપ કર્યા વગર આગળ વધવા માટે 1-ટેપ કાર્ડ દબાવો.',
-          kn: 'ಗುರುತಿನ ಪರಿಶೀಲನೆ. ದಯವಿಟ್ಟು ನಿಮ್ಮ ಮೊಬೈಲ್ ಸಂಖ್ಯೆಯನ್ನು ಪರಿಶೀಲಿಸಿ, ಅಥವಾ ಟೈಪ್ ಮಾಡದೆ ಮುಂದುವರಿಯಲು 1-ಟ್ಯಾಪ್ ಕಾರ್ಡ್ ಒತ್ತಿ.',
-          ml: 'തിരിച്ചറിയൽ പരിശോധന. നിങ്ങളുടെ മൊബൈൽ നമ്പർ സ്ഥിരീകരിക്കുക, അല്ലെങ്കിൽ ടൈപ്പ് ചെയ്യാതെ തുടരാൻ 1-ടാപ്പ് കാർഡ് അമർത്തുക.',
+          en: 'Identity verification. Please enter your mobile number or MRN, or tap 1-Tap Check-In.',
+          hi: 'पहचान सत्यापन। कृपया अपना मोबाइल नंबर या एमआरएन दर्ज करें।',
+          te: 'గుర్తింపు సరిచూడటం. దయచేసి మీ మొబైల్ సంఖ్య లేదా MRN నమోదు చేయండి.',
         };
         speak(identityPrompts[language] || identityPrompts['en']);
       }, 400);
@@ -44,14 +45,53 @@ export const PatientIdentityPage: React.FC = () => {
     setIsVerifying(true);
     setTimeout(() => {
       setIsVerifying(false);
-      verifyIdentity();
-    }, 800);
+      const cleanVal = inputValue.trim();
+
+      // Check if it's Ramesh Kumar's default demo phone/MRN/ABHA
+      if (cleanVal === '9876543210' || cleanVal === 'MRN-90214' || cleanVal === '91-8841-2026-90' || cleanVal.toLowerCase().includes('ramesh')) {
+        setShowNewPatientForm(false);
+        verifyIdentity({
+          name: 'Ramesh Kumar',
+          age: 68,
+          gender: 'male',
+          department: 'Cardiology',
+          phone: '9876543210',
+          mrn: 'MRN-90214',
+          abhaId: '91-8841-2026-90',
+        });
+      } else {
+        // Different phone number or new patient -> show new patient details form
+        setShowNewPatientForm(true);
+        if (!newName) {
+          setNewName('');
+        }
+      }
+    }, 600);
+  };
+
+  const handleRegisterNewPatient = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const generatedMrn = `MRN-${Math.floor(10000 + Math.random() * 90000)}`;
+    const finalName = newName.trim() || 'Guest Patient';
+
+    verifyIdentity({
+      name: finalName,
+      age: parseInt(newAge) || 30,
+      gender: newGender,
+      department: newDept,
+      phone: tab === 'phone' ? inputValue : '9876543210',
+      mrn: tab === 'mrn' ? inputValue : generatedMrn,
+      abhaId: tab === 'abha' ? inputValue : 'Not Linked',
+    });
+
+    setShowNewPatientForm(false);
+    navigate(PATIENT_ROUTES.INTAKE);
   };
 
   return (
     <PageContainer
-      title={t('identity.title')}
-      subtitle={t('identity.subtitle')}
+      title={t('identity.title', 'Patient Identification')}
+      subtitle={t('identity.subtitle', 'Enter your registered mobile number or MRN to look up your details.')}
       maxWidth="md"
     >
       {/* Easy Mode 1-Tap Check-In Banner */}
@@ -61,7 +101,15 @@ export const PatientIdentityPage: React.FC = () => {
           padding="lg"
           onClick={() => {
             setInputValue('9876543210');
-            handleSimulateVerify();
+            setShowNewPatientForm(false);
+            verifyIdentity({
+              name: 'Ramesh Kumar',
+              age: 68,
+              gender: 'male',
+              department: 'Cardiology',
+              phone: '9876543210',
+              mrn: 'MRN-90214',
+            });
           }}
           className="mb-6 border-3 border-amber-500 bg-amber-50 shadow-md flex flex-col sm:flex-row items-center justify-between gap-4 cursor-pointer hover:bg-amber-100/80 transition-all"
         >
@@ -71,7 +119,7 @@ export const PatientIdentityPage: React.FC = () => {
             </div>
             <div>
               <div className="text-xs font-black uppercase tracking-wider text-amber-900">
-                1-Tap Easy Check-In (Elder Assist)
+                1-Tap Easy Check-In (Demo Patient)
               </div>
               <h3 className="font-black text-xl text-slate-950">
                 Check In as Ramesh Kumar (Age 68)
@@ -84,7 +132,6 @@ export const PatientIdentityPage: React.FC = () => {
           <Button
             variant="kiosk"
             size="lg"
-            isLoading={isVerifying}
             className="w-full sm:w-auto shrink-0 bg-slate-950 hover:bg-slate-900 text-white font-black text-base px-6 py-4"
           >
             Check In Now
@@ -99,6 +146,7 @@ export const PatientIdentityPage: React.FC = () => {
           onClick={() => {
             setTab('phone');
             setInputValue('9876543210');
+            setShowNewPatientForm(false);
           }}
           className={cn(
             'flex items-center justify-center gap-2.5 p-3.5 rounded-clinical border-2 font-bold text-xs sm:text-sm transition-all',
@@ -108,7 +156,7 @@ export const PatientIdentityPage: React.FC = () => {
           )}
         >
           <Phone className="w-5 h-5 text-brand-700 shrink-0" />
-          <span className="truncate">{t('identity.tabPhone')}</span>
+          <span className="truncate">{t('identity.tabPhone', 'Mobile Number')}</span>
         </button>
 
         <button
@@ -116,6 +164,7 @@ export const PatientIdentityPage: React.FC = () => {
           onClick={() => {
             setTab('mrn');
             setInputValue('MRN-90214');
+            setShowNewPatientForm(false);
           }}
           className={cn(
             'flex items-center justify-center gap-2.5 p-3.5 rounded-clinical border-2 font-bold text-xs sm:text-sm transition-all',
@@ -125,7 +174,7 @@ export const PatientIdentityPage: React.FC = () => {
           )}
         >
           <CreditCard className="w-5 h-5 text-brand-700 shrink-0" />
-          <span className="truncate">{t('identity.tabMrn')}</span>
+          <span className="truncate">{t('identity.tabMrn', 'Hospital MRN')}</span>
         </button>
 
         <button
@@ -133,6 +182,7 @@ export const PatientIdentityPage: React.FC = () => {
           onClick={() => {
             setTab('abha');
             setInputValue('91-8841-2026-90');
+            setShowNewPatientForm(false);
           }}
           className={cn(
             'flex items-center justify-center gap-2.5 p-3.5 rounded-clinical border-2 font-bold text-xs sm:text-sm transition-all',
@@ -142,7 +192,7 @@ export const PatientIdentityPage: React.FC = () => {
           )}
         >
           <Link2 className="w-5 h-5 text-brand-700 shrink-0" />
-          <span className="truncate">{t('identity.tabAbha')}</span>
+          <span className="truncate">{t('identity.tabAbha', 'ABHA Health ID')}</span>
         </button>
       </div>
 
@@ -151,14 +201,17 @@ export const PatientIdentityPage: React.FC = () => {
         <Input
           label={
             tab === 'phone'
-              ? t('identity.phoneLabel')
+              ? t('identity.phoneLabel', 'Mobile Phone Number')
               : tab === 'mrn'
-              ? t('identity.mrnLabel')
-              : t('identity.abhaLabel')
+              ? t('identity.mrnLabel', 'Hospital MRN Number')
+              : t('identity.abhaLabel', 'ABHA Health Record ID')
           }
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder={t('identity.placeholder')}
+          onChange={(e) => {
+            setInputValue(e.target.value);
+            setShowNewPatientForm(false);
+          }}
+          placeholder="Enter phone number or MRN..."
           isKiosk
           leftIcon={tab === 'phone' ? Phone : tab === 'mrn' ? CreditCard : Link2}
         />
@@ -170,12 +223,106 @@ export const PatientIdentityPage: React.FC = () => {
           isLoading={isVerifying}
           onClick={handleSimulateVerify}
         >
-          {t('identity.verifyBtn')}
+          {t('identity.verifyBtn', 'Look Up Patient Record')}
         </Button>
       </Card>
 
+      {/* New Patient Registration Form (Triggered when non-Ramesh phone is entered) */}
+      {showNewPatientForm && (
+        <Card variant="default" padding="lg" className="mb-6 bg-brand-50/70 border-2 border-brand-300 shadow-md space-y-4 animate-in fade-in duration-200">
+          <div className="flex items-center gap-3 pb-3 border-b border-brand-200">
+            <div className="w-10 h-10 rounded-full bg-brand-700 text-white flex items-center justify-center font-bold shrink-0">
+              <UserPlus className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-extrabold text-base text-brand-950">New Patient Check-In / Registration</h3>
+              <p className="text-xs text-brand-800">
+                No existing record found for <strong>{inputValue}</strong>. Please enter patient details:
+              </p>
+            </div>
+          </div>
+
+          <form onSubmit={handleRegisterNewPatient} className="space-y-4">
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1">
+                Patient Full Name *
+              </label>
+              <Input
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                placeholder="e.g. Priya Sharma"
+                required
+                isKiosk
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1">
+                  Age (Years) *
+                </label>
+                <Input
+                  type="number"
+                  value={newAge}
+                  onChange={(e) => setNewAge(e.target.value)}
+                  placeholder="30"
+                  required
+                  isKiosk
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1">
+                  Gender *
+                </label>
+                <select
+                  value={newGender}
+                  onChange={(e) => setNewGender(e.target.value as 'male' | 'female' | 'other')}
+                  className="w-full p-3 rounded-lg border-2 border-slate-300 bg-white font-bold text-slate-900 text-sm focus:border-brand-600 focus:outline-none"
+                >
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-800 mb-1">
+                Assigned Department / Speciality
+              </label>
+              <select
+                value={newDept}
+                onChange={(e) => setNewDept(e.target.value)}
+                className="w-full p-3 rounded-lg border-2 border-slate-300 bg-white font-bold text-slate-900 text-sm focus:border-brand-600 focus:outline-none"
+              >
+                <option value="General Medicine">General Medicine</option>
+                <option value="Cardiology">Cardiology</option>
+                <option value="Orthopedics">Orthopedics</option>
+                <option value="Pediatrics">Pediatrics</option>
+                <option value="ENT / Otolaryngology">ENT / Otolaryngology</option>
+                <option value="Dermatology">Dermatology</option>
+                <option value="Pulmonology">Pulmonology</option>
+              </select>
+            </div>
+
+            <Button
+              type="submit"
+              onClick={handleRegisterNewPatient}
+              variant="primary"
+              size="lg"
+              fullWidth
+              leftIcon={UserCheck}
+              className="bg-brand-700 hover:bg-brand-800 text-white font-black text-base py-3.5 cursor-pointer"
+            >
+              Complete Check-In as {newName.trim() || 'New Patient'} ➔
+            </Button>
+          </form>
+        </Card>
+      )}
+
       {/* Verification Result Card */}
-      {identity.isVerified && (
+      {identity.isVerified && !showNewPatientForm && (
         <Card
           variant="default"
           padding="lg"
@@ -192,15 +339,15 @@ export const PatientIdentityPage: React.FC = () => {
                   <CheckCircle2 className="w-6 h-6 text-emerald-600" />
                   <h3 className="font-extrabold text-lg text-clinical-navy">{identity.name}</h3>
                   <span className="text-xs font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-full border border-emerald-300">
-                    {t('identity.verifiedBadge')}
+                    {t('identity.verifiedBadge', 'Verified Patient')}
                   </span>
                 </div>
 
                 <div className="flex items-center gap-4 text-xs sm:text-sm text-clinical-muted mt-1.5 flex-wrap">
-                  <span>{t('identity.age')}: <strong className="text-slate-900 font-black">{identity.age}y</strong></span>
-                  <span>{t('identity.gender')}: <strong className="text-slate-900 font-black">{identity.gender.toUpperCase()}</strong></span>
-                  <span>{t('identity.mrn')}: <strong className="text-slate-900 font-mono font-black">{identity.mrn}</strong></span>
-                  <span>{t('identity.dept')}: <strong className="text-brand-800 font-black">{identity.department}</strong></span>
+                  <span>{t('identity.age', 'Age')}: <strong className="text-slate-900 font-black">{identity.age}y</strong></span>
+                  <span>{t('identity.gender', 'Gender')}: <strong className="text-slate-900 font-black">{identity.gender.toUpperCase()}</strong></span>
+                  <span>{t('identity.mrn', 'MRN')}: <strong className="text-slate-900 font-mono font-black">{identity.mrn}</strong></span>
+                  <span>{t('identity.dept', 'Dept')}: <strong className="text-brand-800 font-black">{identity.department}</strong></span>
                 </div>
               </div>
             </div>
@@ -229,7 +376,7 @@ export const PatientIdentityPage: React.FC = () => {
           onClick={() => requestStaffAssistance('Identity verification assistance requested')}
           className="text-slate-600 font-semibold"
         >
-          {t('btn.staffAssistance')}
+          {t('btn.staffAssistance', 'Staff Assistance')}
         </Button>
 
         <div className="flex items-center gap-3">
@@ -239,7 +386,7 @@ export const PatientIdentityPage: React.FC = () => {
             leftIcon={ArrowLeft}
             onClick={() => navigate(PATIENT_ROUTES.CONSENT)}
           >
-            {t('btn.back')}
+            {t('btn.back', 'Back')}
           </Button>
 
           <Button
@@ -249,7 +396,7 @@ export const PatientIdentityPage: React.FC = () => {
             rightIcon={ArrowRight}
             onClick={() => navigate(PATIENT_ROUTES.INTAKE)}
           >
-            {t('btn.continue')}
+            {t('btn.continue', 'Continue')}
           </Button>
         </div>
       </div>

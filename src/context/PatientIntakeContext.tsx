@@ -1,8 +1,12 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { MOCK_PATIENT, MOCK_PATIENT_STORY } from '../services/mock/mockData';
+import { MOCK_PATIENT, MOCK_PATIENT_STORY, getLocalizedMockStory } from '../services/mock/mockData';
 import { PatientStory } from '../types/story';
+import { MedicalFact } from '../types/evidence';
+import { VerificationStatus } from '../types/clinical';
+import { TimelineEvent } from '../types/timeline';
 import {
   getTranslation,
+  SymptomCategory,
   getClinicalQuestions,
   ClinicalQuestionItem,
   LANGUAGE_VOICE_MAP,
@@ -82,16 +86,19 @@ export interface PatientIntakeContextType {
   setConsent: React.Dispatch<React.SetStateAction<ConsentSettings>>;
   identity: PatientIdentity;
   setIdentity: React.Dispatch<React.SetStateAction<PatientIdentity>>;
-  verifyIdentity: () => void;
+  verifyIdentity: (customData?: Partial<PatientIdentity>) => void;
   interviewAnswers: InterviewAnswer[];
   addInterviewAnswer: (answer: InterviewAnswer) => void;
+  symptomCategory: SymptomCategory;
+  setSymptomCategory: (category: SymptomCategory) => void;
   redFlagsDetected: boolean;
   setRedFlagsDetected: (detected: boolean) => void;
   uploadedDocs: UploadedDocItem[];
   addDocument: (doc: UploadedDocItem) => void;
   removeDocument: (id: string) => void;
   patientStory: PatientStory;
-  updateStoryFactVerification: (factId: string) => void;
+  factVerificationOverrides: Record<string, VerificationStatus>;
+  updateStoryFactVerification: (factId: string, status?: VerificationStatus) => void;
   isReviewConfirmed: boolean;
   setIsReviewConfirmed: (confirmed: boolean) => void;
   intakeSessionId: string | null;
@@ -152,61 +159,124 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   const [interviewAnswers, setInterviewAnswers] = useState<InterviewAnswer[]>(
-    saved?.interviewAnswers || [
-    {
-      questionId: 'q1',
-      question: 'What main problem or symptom brought you to the hospital today?',
-      answer: 'I have chest tightness and pressure since yesterday morning.',
-      timestamp: '09:16 AM',
-      confidence: 'high',
-    },
-    {
-      questionId: 'q2',
-      question: 'When did the pain or tightness begin?',
-      answer: 'Started yesterday morning after walking up stairs.',
-      timestamp: '09:17 AM',
-      confidence: 'high',
-    },
-    {
-      questionId: 'q3',
-      question: 'Does the pain move to your arm, shoulder, jaw, or back?',
-      answer: 'Yes, it spreads toward my left shoulder occasionally.',
-      timestamp: '09:18 AM',
-      confidence: 'high',
-    },
-    {
-      questionId: 'q4',
-      question: 'Are you experiencing sweating or difficulty breathing?',
-      answer: 'Yes, sweating and shortness of breath when walking.',
-      timestamp: '09:19 AM',
-      confidence: 'high',
-    },
-  ]);
+    saved?.interviewAnswers || []
+  );
 
-  const [redFlagsDetected, setRedFlagsDetected] = useState<boolean>(true);
+  const [symptomCategory, setSymptomCategory] = useState<SymptomCategory>(
+    saved?.symptomCategory || 'fever'
+  );
 
-  const [uploadedDocs, setUploadedDocs] = useState<UploadedDocItem[]>([
-    {
-      id: 'doc-1',
-      fileName: 'CityHospital_DischargeSummary_2024.pdf',
-      fileType: 'application/pdf',
-      documentType: 'Discharge Summary',
-      uploadDate: '14 Oct 2024',
-      status: 'ready',
-      extractedFactsCount: 5,
-    },
-    {
-      id: 'doc-2',
-      fileName: 'Prescription_Feb2025.jpg',
-      fileType: 'image/jpeg',
-      documentType: 'Prescription',
-      uploadDate: '03 Feb 2025',
-      status: 'ready',
-      extractedFactsCount: 3,
-    },
-  ]);
+  const [redFlagsDetected, setRedFlagsDetected] = useState<boolean>(false);
+
+  const [uploadedDocs, setUploadedDocs] = useState<UploadedDocItem[]>([]);
 
   const [patientStory, setPatientStory] = useState<PatientStory>(MOCK_PATIENT_STORY);
+
+  const [factVerificationOverrides, setFactVerificationOverrides] = useState<Record<string, VerificationStatus>>(
+    saved?.factVerificationOverrides || {}
+  );
+
+  const effectivePatientStory = React.useMemo<PatientStory>(() => {
+    const baseStory = getLocalizedMockStory(language, identity, symptomCategory);
+
+    if (interviewAnswers.length > 0) {
+      const formattedAnswers = interviewAnswers.map((a) => a.answer).join('. ');
+      const complaint = interviewAnswers[0]?.answer || baseStory.chiefComplaint;
+      const duration = interviewAnswers[1]?.answer || baseStory.onsetAndDuration;
+
+      const reportedFacts: MedicalFact[] = interviewAnswers.map((ans, idx) => {
+        const factId = `fact-interview-${idx}`;
+        return {
+          id: factId,
+          patientId: identity.mrn || 'patient-ramesh-01',
+          category: 'symptom',
+          title: ans.question,
+          detail: ans.answer,
+          extractedDate: ans.timestamp || (language === 'te' ? 'ఈరోజు' : 'Today'),
+          verificationStatus: factVerificationOverrides[factId] || 'needs-verification',
+          confidence: 'high',
+          sources: [
+            {
+              id: `src-voice-${idx}`,
+              type: 'conversation-transcript',
+              title: language === 'te' ? 'రోగి వాయిస్ ఇంటర్వ్యూ' : language === 'hi' ? 'मरीज़ वॉयस इंटरव्यू' : 'Patient Voice Intake',
+              date: ans.timestamp || (language === 'te' ? 'ఈరోజు' : 'Today'),
+              snippetText: `${ans.question}: "${ans.answer}"`,
+              confidence: 'high',
+            },
+          ],
+        };
+      });
+
+      const summaryText = language === 'te'
+        ? `${identity.name || 'రోగి'}, ${identity.age || 65} సంవత్సరాల ${identity.gender === 'female' ? 'మహిళ' : 'పురుషుడు'}, సంప్రదింపుల కోసం వచ్చారు. కియోస్క్ ఇంటర్వ్యూలో తెలిపిన వివరాలు: "${formattedAnswers}".`
+        : language === 'hi'
+        ? `मरीज़ ${identity.name || 'मरीज़'}, उम्र ${identity.age || 65}, परामर्श हेतु उपस्थित हुए हैं। साक्षात्कार में दर्ज लक्षण: "${formattedAnswers}"।`
+        : `${identity.name || 'Patient'}, a ${identity.age || 65}-year-old ${identity.gender || 'patient'}, presents for consultation. Reported symptoms during kiosk interview: "${formattedAnswers}"`;
+
+      const rawSymptoms = uploadedDocs.length > 0 ? [...reportedFacts, ...baseStory.reportedSymptoms.slice(1)] : reportedFacts;
+      const finalSymptoms = rawSymptoms.map((f) => ({
+        ...f,
+        verificationStatus: factVerificationOverrides[f.id] || f.verificationStatus,
+      }));
+      const verifiedCount = finalSymptoms.filter((f) => f.verificationStatus === 'doctor-verified').length;
+
+      return {
+        ...baseStory,
+        summaryParagraph: summaryText,
+        chiefComplaint: complaint,
+        onsetAndDuration: duration,
+        reportedSymptoms: finalSymptoms,
+        currentMedications: uploadedDocs.length > 0 ? baseStory.currentMedications : [],
+        allergies: uploadedDocs.length > 0 ? baseStory.allergies : [],
+        abnormalLabs: uploadedDocs.length > 0 ? baseStory.abnormalLabs : [],
+        detectedConflicts: uploadedDocs.length > 0 ? baseStory.detectedConflicts : [],
+        medicalTimeline: uploadedDocs.length > 0 ? baseStory.medicalTimeline : [
+          {
+            id: 'time-01',
+            patientId: identity.mrn || 'patient-ramesh-01',
+            date: language === 'te' ? 'ఈరోజు' : 'Today',
+            year: '2026',
+            title: language === 'te' ? 'కియోస్క్ ఇంటర్వ్యూ పూర్తయింది' : 'Kiosk Intake Completed',
+            type: 'symptom-onset',
+            description: language === 'te' ? `${complaint} కోసం రోగి గైడెడ్ ఇంటర్వ్యూ పూర్తి చేశారు.` : `Patient completed guided interview for ${complaint}.`,
+            source: {
+              id: 'src-time-01',
+              type: 'patient-self-report',
+              title: language === 'te' ? 'కియోస్క్ వాయిస్ ఇన్‌టేక్' : 'Kiosk Voice Intake',
+              date: language === 'te' ? 'ఈరోజు' : 'Today',
+              snippetText: `Interview: ${complaint}`,
+              confidence: 'high',
+            },
+            confidence: 'high',
+            tags: ['Interview', 'Intake'],
+          },
+        ],
+        verificationProgress: {
+          totalFacts: finalSymptoms.length + (uploadedDocs.length > 0 ? baseStory.currentMedications.length : 0),
+          verifiedFacts: verifiedCount + (uploadedDocs.length > 0 ? 1 : 0),
+          unverifiedFacts: finalSymptoms.length - verifiedCount,
+        },
+      };
+    }
+
+    const rawSymptoms = baseStory.reportedSymptoms.map((f) => ({
+      ...f,
+      verificationStatus: factVerificationOverrides[f.id] || f.verificationStatus,
+    }));
+    const verifiedCount = rawSymptoms.filter((f) => f.verificationStatus === 'doctor-verified').length;
+
+    return {
+      ...baseStory,
+      reportedSymptoms: rawSymptoms,
+      verificationProgress: {
+        totalFacts: rawSymptoms.length,
+        verifiedFacts: verifiedCount,
+        unverifiedFacts: rawSymptoms.length - verifiedCount,
+      },
+    };
+  }, [uploadedDocs, interviewAnswers, identity, language, symptomCategory, factVerificationOverrides]);
+
   const [isReviewConfirmed, setIsReviewConfirmed] = useState<boolean>(false);
 
   const [isSpeaking, setIsSpeaking] = useState<boolean>(false);
@@ -257,6 +327,47 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
       const targetLangCode = currentLang;
       const targetLangPrefix = bcp47.split('-')[0].toLowerCase();
 
+      // For non-English languages (e.g. Telugu, Hindi), use our backend TTS proxy
+      if (targetLangCode !== 'en') {
+        try {
+          const backendTtsUrl = `http://127.0.0.1:8000/api/v1/tts?text=${encodeURIComponent(cleanText)}&lang=${targetLangCode}`;
+          const audio = new Audio(backendTtsUrl);
+          activeAudioRef.current = audio;
+
+          audio.onplay = () => {
+            setIsSpeaking(true);
+            setCurrentSpeakingText(cleanText);
+          };
+          audio.onended = () => {
+            setIsSpeaking(false);
+            setCurrentSpeakingText('');
+            activeAudioRef.current = null;
+          };
+          audio.onerror = (err) => {
+            console.warn('Backend TTS audio error, falling back to WebSpeech:', err);
+            if ('speechSynthesis' in window) {
+              const utt = new SpeechSynthesisUtterance(cleanText);
+              utt.lang = bcp47;
+              window.speechSynthesis.speak(utt);
+            } else {
+              setIsSpeaking(false);
+            }
+          };
+
+          audio.play().catch((playErr) => {
+            console.warn('Audio play autoplay blocked:', playErr);
+            if ('speechSynthesis' in window) {
+              const utt = new SpeechSynthesisUtterance(cleanText);
+              utt.lang = bcp47;
+              window.speechSynthesis.speak(utt);
+            }
+          });
+          return;
+        } catch (err) {
+          console.warn('Failed to initialize backend TTS audio:', err);
+        }
+      }
+
       // Check if browser Web Speech API has a voice matching the target language
       const voices = 'speechSynthesis' in window ? window.speechSynthesis.getVoices() : [];
       const matchedVoice = voices.find((v) => {
@@ -271,7 +382,7 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
       });
 
       // Try browser WebSpeech first if matching voice is available or language is English
-      if ('speechSynthesis' in window && (matchedVoice || targetLangPrefix === 'en')) {
+      if ('speechSynthesis' in window) {
         setTimeout(() => {
           try {
             const utterance = new SpeechSynthesisUtterance(cleanText);
@@ -301,45 +412,6 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
             setIsSpeaking(false);
           }
         }, 50);
-      } else {
-        // High-fidelity fallback audio TTS for Indian regional languages
-        try {
-          const fallbackUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodeURIComponent(cleanText)}&tl=${targetLangCode}&client=tw-ob`;
-          const audio = new Audio(fallbackUrl);
-          activeAudioRef.current = audio;
-
-          audio.onplay = () => {
-            setIsSpeaking(true);
-            setCurrentSpeakingText(cleanText);
-          };
-          audio.onended = () => {
-            setIsSpeaking(false);
-            setCurrentSpeakingText('');
-            activeAudioRef.current = null;
-          };
-          audio.onerror = () => {
-            // Fallback to basic WebSpeech if network audio fails
-            if ('speechSynthesis' in window) {
-              const utt = new SpeechSynthesisUtterance(cleanText);
-              utt.lang = bcp47;
-              window.speechSynthesis.speak(utt);
-            } else {
-              setIsSpeaking(false);
-            }
-          };
-
-          audio.play().catch(() => {
-            // Touch autoplay block fallback
-            if ('speechSynthesis' in window) {
-              const utt = new SpeechSynthesisUtterance(cleanText);
-              utt.lang = bcp47;
-              window.speechSynthesis.speak(utt);
-            }
-          });
-        } catch (err) {
-          console.warn('Fallback audio playback error:', err);
-          setIsSpeaking(false);
-        }
       }
     },
     [stopSpeaking]
@@ -409,8 +481,8 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const [intakeSessionId, setIntakeSessionId] = useState<string | null>(null);
 
-  const verifyIdentity = async () => {
-    setIdentity((prev) => ({ ...prev, isVerified: true }));
+  const verifyIdentity = async (customData?: Partial<PatientIdentity>) => {
+    setIdentity((prev) => ({ ...prev, ...customData, isVerified: true }));
     try {
       const { IntakeApi } = await import('../services/api/intakeApi');
       const res = await IntakeApi.startIntake({
@@ -427,7 +499,15 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const addInterviewAnswer = async (answer: InterviewAnswer) => {
-    setInterviewAnswers((prev) => [...prev, answer]);
+    setInterviewAnswers((prev) => {
+      const idx = prev.findIndex((a) => a.questionId === answer.questionId);
+      if (idx >= 0) {
+        const copy = [...prev];
+        copy[idx] = answer;
+        return copy;
+      }
+      return [...prev, answer];
+    });
     if (intakeSessionId) {
       try {
         const { IntakeApi } = await import('../services/api/intakeApi');
@@ -446,10 +526,11 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
     setUploadedDocs((prev) => prev.filter((d) => d.id !== id));
   };
 
-  const updateStoryFactVerification = (factId: string) => {
+  const updateStoryFactVerification = (factId: string, newStatus: VerificationStatus = 'doctor-verified') => {
+    setFactVerificationOverrides((prev) => ({ ...prev, [factId]: newStatus }));
     setPatientStory((prev) => {
       const updatedSymptoms = prev.reportedSymptoms.map((fact) =>
-        fact.id === factId ? { ...fact, verificationStatus: 'doctor-verified' as const } : fact
+        fact.id === factId ? { ...fact, verificationStatus: newStatus } : fact
       );
       const verifiedCount = updatedSymptoms.filter((f) => f.verificationStatus === 'doctor-verified').length;
       return {
@@ -557,6 +638,9 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
     setUploadedDocs([]);
     setIntakeSessionId(null);
     setIsReviewConfirmed(false);
+    setRedFlagsDetected(false);
+    setSymptomCategory('fever');
+    setFactVerificationOverrides({});
   };
 
   React.useEffect(() => {
@@ -567,10 +651,12 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
         consent,
         identity,
         interviewAnswers,
+        symptomCategory,
         redFlagsDetected,
         uploadedDocs,
         intakeSessionId,
         isReviewConfirmed,
+        factVerificationOverrides,
       };
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
     } catch (e) {
@@ -582,10 +668,12 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
     consent,
     identity,
     interviewAnswers,
+    symptomCategory,
     redFlagsDetected,
     uploadedDocs,
     intakeSessionId,
     isReviewConfirmed,
+    factVerificationOverrides,
   ]);
 
   return (
@@ -617,12 +705,15 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
         verifyIdentity,
         interviewAnswers,
         addInterviewAnswer,
+        symptomCategory,
+        setSymptomCategory,
         redFlagsDetected,
         setRedFlagsDetected,
         uploadedDocs,
         addDocument,
         removeDocument,
-        patientStory,
+        patientStory: effectivePatientStory,
+        factVerificationOverrides,
         updateStoryFactVerification,
         isReviewConfirmed,
         setIsReviewConfirmed,

@@ -13,7 +13,8 @@ import { cn } from '../../utils/cn';
 
 export const PatientStoryPage: React.FC = () => {
   const navigate = useNavigate();
-  const { patientStory, updateStoryFactVerification, accessibility, speak, stopSpeaking, t, language } = usePatientIntake();
+  const { patientStory, factVerificationOverrides, uploadedDocs, updateStoryFactVerification, accessibility, speak, stopSpeaking, t, language } = usePatientIntake();
+  const hasDocs = uploadedDocs.length > 0;
   const [selectedFact, setSelectedFact] = useState<MedicalFact | null>(null);
   const [isEvidenceOpen, setIsEvidenceOpen] = useState(false);
   const [showConflictModal, setShowConflictModal] = useState(false);
@@ -42,12 +43,24 @@ export const PatientStoryPage: React.FC = () => {
   }, [accessibility.voiceGuidance, accessibility.easyMode, speak, stopSpeaking, language]);
 
   const handleOpenEvidence = (fact: MedicalFact) => {
-    setSelectedFact(fact);
+    const fromStory = patientStory.reportedSymptoms.find((f) => f.id === fact.id);
+    const effectiveStatus = factVerificationOverrides[fact.id] || fromStory?.verificationStatus || fact.verificationStatus;
+    const latestFact: MedicalFact = {
+      ...(fromStory || fact),
+      verificationStatus: effectiveStatus,
+    };
+    setSelectedFact(latestFact);
     setIsEvidenceOpen(true);
   };
 
   const handleVerifyFact = (factId: string) => {
-    updateStoryFactVerification(factId);
+    updateStoryFactVerification(factId, 'doctor-verified');
+    setSelectedFact((prev) => (prev && prev.id === factId ? { ...prev, verificationStatus: 'doctor-verified' } : prev));
+  };
+
+  const handleRejectFact = (factId: string) => {
+    updateStoryFactVerification(factId, 'rejected');
+    setSelectedFact((prev) => (prev && prev.id === factId ? { ...prev, verificationStatus: 'rejected' } : prev));
   };
 
   return (
@@ -61,8 +74,12 @@ export const PatientStoryPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <ShieldCheck className="w-6 h-6 text-brand-700 shrink-0" />
           <div className="text-xs text-brand-900">
-            <strong className="font-extrabold text-sm block">{t('story.evidenceBannerTitle')}</strong>
-            {t('story.evidenceBannerDesc')}
+            <strong className="font-extrabold text-sm block">
+              {hasDocs ? t('story.evidenceBannerTitle', 'Evidence-Linked Patient Record') : t('story.interviewBannerTitle', 'Interview-Verified Patient Intake')}
+            </strong>
+            {hasDocs
+              ? t('story.evidenceBannerDesc', 'Every extracted medicine, symptom, and diagnosis is linked directly to source documents or your voice response.')
+              : t('story.interviewBannerDesc', 'Every reported symptom, duration, and clinical detail is linked directly to your interview response.')}
           </div>
         </div>
 
@@ -71,7 +88,7 @@ export const PatientStoryPage: React.FC = () => {
           size="sm"
           onClick={() => setShowConflictModal((prev) => !prev)}
         >
-          {showConflictModal ? 'Hide Conflict Banner' : 'Simulate Dosage Conflict'}
+          {showConflictModal ? t('story.hideConflict', 'Hide Conflict Banner') : t('story.simulateConflict', 'Simulate Dosage Conflict')}
         </Button>
       </div>
 
@@ -82,16 +99,16 @@ export const PatientStoryPage: React.FC = () => {
             <div className="flex items-start gap-3">
               <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
               <div>
-                <h4 className="font-extrabold text-sm text-amber-950">⚠ Information Conflict Detected</h4>
+                <h4 className="font-extrabold text-sm text-amber-950">⚠ {t('story.conflictDetectedTitle', 'Information Conflict Detected')}</h4>
                 <div className="text-xs text-amber-900 mt-1 space-y-1">
                   <p>
-                    <strong>Patient reported:</strong> Metformin 500 mg (Voice Interview)
+                    <strong>{t('story.patientReported', 'Patient reported:')}</strong> Metformin 500 mg (Voice Interview)
                   </p>
                   <p>
-                    <strong>Latest prescription:</strong> Metformin 850 mg (Prescription_Feb2025.jpg)
+                    <strong>{t('story.latestPrescription', 'Latest prescription:')}</strong> Metformin 850 mg (Prescription_Feb2025.jpg)
                   </p>
                   <p className="text-[11px] text-amber-800 italic mt-1">
-                    Sources contain different dosage values. Please review during doctor consultation.
+                    {t('story.dosageReviewNotice', 'Sources contain different dosage values. Please review during doctor consultation.')}
                   </p>
                 </div>
               </div>
@@ -109,7 +126,7 @@ export const PatientStoryPage: React.FC = () => {
                     title: 'Metformin Dosage Discrepancy',
                     detail: 'Metformin 500 mg / 850 mg dosage discrepancy between voice report and prescription.',
                     extractedDate: 'Today',
-                    verificationStatus: 'needs-verification',
+                    verificationStatus: factVerificationOverrides['fact-metformin'] || 'needs-verification',
                     confidence: 'medium',
                     sources: [
                       {
@@ -133,7 +150,7 @@ export const PatientStoryPage: React.FC = () => {
                   setIsEvidenceOpen(true);
                 }}
               >
-                View Sources
+                {t('story.viewSources', 'View Sources')}
               </Button>
             </div>
           </div>
@@ -147,10 +164,10 @@ export const PatientStoryPage: React.FC = () => {
             <span className="text-2xl">🔊</span>
             <div>
               <div className="font-extrabold text-sm text-slate-950">
-                Audio Overview of Your Records
+                {t('story.audioOverviewTitle', 'Audio Overview of Your Records')}
               </div>
               <div className="text-xs text-slate-700">
-                Tap the button to listen to all identified symptoms, medications, and conditions read aloud.
+                {t('story.audioOverviewDesc', 'Tap the button to listen to all identified symptoms, medications, and conditions read aloud.')}
               </div>
             </div>
           </div>
@@ -158,12 +175,16 @@ export const PatientStoryPage: React.FC = () => {
             variant="kiosk"
             size="md"
             onClick={() => {
-              const summary = `Clinical Story Overview. Chief complaint: ${patientStory.chiefComplaint}. Onset: ${patientStory.onsetAndDuration}. Summary: ${patientStory.summaryParagraph}`;
+              const summary = language === 'te'
+                ? `క్లినికల్ సారాంశం. ప్రధాన సమస్య: ${patientStory.chiefComplaint}. ప్రారంభ సమయం: ${patientStory.onsetAndDuration}. పూర్తి వివరాలు: ${patientStory.summaryParagraph}`
+                : language === 'hi'
+                ? `क्लिनिकल सारांश। मुख्य समस्या: ${patientStory.chiefComplaint}। अवधि: ${patientStory.onsetAndDuration}। विवरण: ${patientStory.summaryParagraph}`
+                : `Clinical Story Overview. Chief complaint: ${patientStory.chiefComplaint}. Onset: ${patientStory.onsetAndDuration}. Summary: ${patientStory.summaryParagraph}`;
               speak(summary, true);
             }}
             className="shrink-0 bg-slate-950 hover:bg-slate-900 text-white font-black"
           >
-            Play Summary Audio
+            {t('story.playSummaryAudio', 'Play Summary Audio')}
           </Button>
         </div>
       )}
@@ -192,7 +213,7 @@ export const PatientStoryPage: React.FC = () => {
               'bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg px-8 py-5 min-h-[60px] shadow-lg border-2 border-emerald-800'
           )}
         >
-          {accessibility.easyMode ? 'CONTINUE TO FINAL CONFIRMATION ➔' : t('story.proceedReview')}
+          {accessibility.easyMode ? t('story.continueFinalConfirm', 'CONTINUE TO FINAL CONFIRMATION ➔') : t('story.proceedReview')}
         </Button>
       </div>
 
@@ -202,6 +223,8 @@ export const PatientStoryPage: React.FC = () => {
         onClose={() => setIsEvidenceOpen(false)}
         fact={selectedFact}
         onVerifyFact={handleVerifyFact}
+        onRejectFact={handleRejectFact}
+        isDoctorView={false}
       />
     </PageContainer>
   );

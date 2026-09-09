@@ -1,3 +1,4 @@
+import { usePatientIntake } from '../../context/PatientIntakeContext';
 import React, { useState } from 'react';
 import { TimelineEvent } from '../../types/timeline';
 import { ConfidenceBadge } from '../confidence/ConfidenceBadge';
@@ -12,6 +13,7 @@ export interface TimelineProps {
 }
 
 export const Timeline: React.FC<TimelineProps> = ({ events, onSelectEvent, className }) => {
+  const { t } = usePatientIntake();
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
 
   const toggleExpand = (id: string) => {
@@ -69,7 +71,7 @@ export const Timeline: React.FC<TimelineProps> = ({ events, onSelectEvent, class
                     <span>{event.date}</span>
                     {event.isAbnormal && (
                       <span className="inline-flex items-center gap-1 text-[11px] text-red-700 font-bold px-1.5 py-0.2 rounded bg-red-100">
-                        <AlertTriangle className="w-3 h-3" /> Abnormal Report
+                        <AlertTriangle className="w-3 h-3" /> {t('timeline.abnormal', 'Abnormal Report')}
                       </span>
                     )}
                   </div>
@@ -87,7 +89,7 @@ export const Timeline: React.FC<TimelineProps> = ({ events, onSelectEvent, class
 
               {/* Source Attribution & Tags */}
               <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-clinical-border text-[11px] text-clinical-muted">
-                <span className="font-medium text-slate-700">Source: {event.source.title}</span>
+                <span className="font-medium text-slate-700">{t('timeline.source', 'Source:')} {event.source.title}</span>
 
                 {event.tags && event.tags.length > 0 && (
                   <div className="flex items-center gap-1">
@@ -104,12 +106,12 @@ export const Timeline: React.FC<TimelineProps> = ({ events, onSelectEvent, class
               {isExpanded && (
                 <div className="p-3 mt-1 rounded bg-slate-50 border border-slate-200 text-xs text-clinical-navy animate-in fade-in duration-150">
                   <div className="font-bold text-[11px] uppercase tracking-wider text-clinical-muted mb-1">
-                    Evidence Detail & Hospital Notes
+                    {t('timeline.evidenceDetail', 'Evidence Detail & Hospital Notes')}
                   </div>
                   <p className="italic text-slate-700">"{event.source.snippetText}"</p>
                   {event.hospitalOrDoctor && (
                     <div className="mt-2 text-[11px] text-slate-500">
-                      Hospital / Physician: <span className="font-medium text-slate-700">{event.hospitalOrDoctor}</span>
+                      {t('timeline.hospitalPhysician', 'Hospital / Physician:')} <span className="font-medium text-slate-700">{event.hospitalOrDoctor}</span>
                     </div>
                   )}
                 </div>

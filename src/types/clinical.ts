@@ -2,7 +2,7 @@ export type RiskLevel = 'routine' | 'needs-attention' | 'high-priority' | 'immed
 
 export type ConfidenceLevel = 'high' | 'medium' | 'low';
 
-export type VerificationStatus = 'patient-reported' | 'ai-extracted' | 'needs-verification' | 'doctor-verified';
+export type VerificationStatus = 'patient-reported' | 'ai-extracted' | 'needs-verification' | 'doctor-verified' | 'rejected' | 'disputed';
 
 export type UserRole = 'patient' | 'doctor' | 'nurse' | 'admin';
 

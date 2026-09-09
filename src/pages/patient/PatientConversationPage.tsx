@@ -51,6 +51,7 @@ const QUESTIONS_STREAM = [
 ];
 
 import { ConversationApi } from '../../services/api/conversationApi';
+import { getClinicalQuestions, getDynamicEasyModeOptions, SymptomCategory } from '../../constants/translations';
 
 const EASY_MODE_OPTIONS: Record<number, { text: string; icon: string }[]> = {
   0: [
@@ -72,15 +73,117 @@ const EASY_MODE_OPTIONS: Record<number, { text: string; icon: string }[]> = {
     { text: 'Stays localized in chest only (no spread)', icon: '⭕' },
   ],
   3: [
-    { text: 'Heavy sweating & breathlessness present', icon: '💦' },
+    { text: 'Heavy sweating & breathlessness present', icon: '😓' },
     { text: 'Nausea or cold clammy skin', icon: '🤢' },
     { text: 'No sweating or breathlessness', icon: '❌' },
   ],
 };
 
+
+export const detectCategory = (text: string, currentCategory: SymptomCategory = 'leg_pain'): SymptomCategory => {
+  if (!text) return currentCategory;
+  const lower = text.toLowerCase();
+
+  // 1. Leg, knee, joint, foot, body ache, back pain, walking difficulty
+  if (
+    lower.includes('leg') || lower.includes('legs') || lower.includes('knee') || lower.includes('knees') ||
+    lower.includes('joint') || lower.includes('joints') || lower.includes('bone') || lower.includes('muscle') ||
+    lower.includes('foot') || lower.includes('feet') || lower.includes('ankle') || lower.includes('calf') ||
+    lower.includes('thigh') || lower.includes('back pain') || lower.includes('body pain') || lower.includes('body ache') ||
+    lower.includes('bodyache') || lower.includes('walk') || lower.includes('limp') || lower.includes('sprain') ||
+    lower.includes('cramp') || lower.includes('legs pain') || lower.includes('leg pain') ||
+    // Telugu terms
+    lower.includes('కాలు') || lower.includes('కాళ్ళు') || lower.includes('కాళ్ళ') || lower.includes('కాళ్ళనొప్పి') ||
+    lower.includes('కాళ్ల') || lower.includes('మోకాలు') || lower.includes('మోకాళ్ళు') || lower.includes('మోకాళ్ళ') ||
+    lower.includes('కీళ్ళు') || lower.includes('కీళ్ళ') || lower.includes('నడుము') || lower.includes('వెన్ను') ||
+    lower.includes('ఒళ్ళు నొప్పులు') || lower.includes('ఒళ్ళునొప్పి') || lower.includes('నడవలేక') ||
+    lower.includes('నడవడంలో') || lower.includes('నడవటం') || lower.includes('తిమ్మిరి') || lower.includes('పాదం') ||
+    // Hindi terms
+    lower.includes('पैर') || lower.includes('पैरों') || lower.includes('घुटना') || lower.includes('घुटने') ||
+    lower.includes('घुटनों') || lower.includes('जोड़') || lower.includes('जोड़ों') || lower.includes('कमर') ||
+    lower.includes('पीठ दर्द') || lower.includes('बदन दर्द') || lower.includes('चलने में') || lower.includes('हड्डी') ||
+    // Other language roots
+    lower.includes('கால்கள்') || lower.includes('முழங்கால்') || lower.includes('পা') || lower.includes('కాలు')
+  ) {
+    return 'leg_pain';
+  }
+
+  // 2. Chest pain / Cardiac
+  if (
+    lower.includes('chest') || lower.includes('heart') || lower.includes('tightness') || lower.includes('cardiac') || lower.includes('angina') ||
+    lower.includes('छाती') || lower.includes('सीना') || lower.includes('सीने') || lower.includes('दिल') ||
+    lower.includes('ఛాతీ') || lower.includes('గుండె') || lower.includes('ఛాతి') ||
+    lower.includes('நெஞ்சு') || lower.includes('బుకర్') || lower.includes('বুক')
+  ) {
+    return 'chest_pain';
+  }
+
+  // 3. Breathlessness / Respiratory
+  if (
+    lower.includes('breath') || lower.includes('asthma') || lower.includes('suffocat') || lower.includes('wheez') || lower.includes('shortness') || lower.includes('dyspnea') ||
+    lower.includes('सांस') || lower.includes('दम') || lower.includes('हांफना') ||
+    lower.includes('శ్వాస') || lower.includes('ఆయాసం') || lower.includes('దమ్ము') || lower.includes('ఉబ్బసం') ||
+    lower.includes('మూச்சு') || lower.includes('শ্বাস') || lower.includes('શ્વાસ') || lower.includes('ಉಸಿರಾಟ') || lower.includes('ശ്വാസം')
+  ) {
+    return 'breathlessness';
+  }
+
+  // 4. Headache / Migraine
+  if (
+    lower.includes('headache') || lower.includes('head') || lower.includes('migraine') || lower.includes('dizz') || lower.includes('gidd') ||
+    lower.includes('सिर') || lower.includes('सर दर्द') || lower.includes('सिरदर्द') || lower.includes('चक्कर') ||
+    lower.includes('తల') || lower.includes('తలనొప్పి') || lower.includes('తల నొప్పి') || lower.includes('తలతిరగడం') || lower.includes('మైకం') ||
+    lower.includes('தலை') || lower.includes('தலைவலி') || lower.includes('মাথা') || lower.includes('માથું') || lower.includes('ತಲೆ') || lower.includes('തല')
+  ) {
+    return 'headache';
+  }
+
+  // 5. Stomach / Abdominal
+  if (
+    lower.includes('stomach') || lower.includes('abdomen') || lower.includes('belly') || lower.includes('nausea') || lower.includes('vomit') || lower.includes('acid') || lower.includes('gastric') ||
+    lower.includes('पेट') || lower.includes('मळमळ') || lower.includes('उल्टी') || lower.includes('एसिडिटी') ||
+    lower.includes('కడుపు') || lower.includes('పొట్ట') || lower.includes('వికారం') || lower.includes('వాంతి') || lower.includes('ఎసిడిటీ') || lower.includes('కడుపునొప్పి') ||
+    lower.includes('வயிறு') || lower.includes('পেট') || lower.includes('પેટ') || lower.includes('ಹೊಟ್ಟೆ') || lower.includes('വയറ്')
+  ) {
+    return 'stomach_pain';
+  }
+
+  // 6. Cough / Cold / Throat
+  if (
+    lower.includes('cough') || lower.includes('cold') || lower.includes('sneeze') || lower.includes('phlegm') || lower.includes('mucus') || lower.includes('sore throat') || lower.includes('throat') || lower.includes('runny') ||
+    lower.includes('खांसी') || lower.includes('जुकाम') || lower.includes('खराश') || lower.includes('बलगम') ||
+    lower.includes('దగ్గు') || lower.includes('జలుబు') || lower.includes('గొంతు') || lower.includes('కఫం') || lower.includes('తుమ్ములు')
+  ) {
+    return 'cough_cold';
+  }
+
+  // 7. Fever / High temperature / Chills
+  if (
+    lower.includes('fever') || lower.includes('temp') || lower.includes('chill') || lower.includes('warm') || lower.includes('shiver') ||
+    lower.includes('बुखार') || lower.includes('ताप') || lower.includes('ठंड') ||
+    lower.includes('జ్వరం') || lower.includes('జ్వర') || lower.includes('కాక') || lower.includes('చలి') || lower.includes('వేడి') ||
+    lower.includes('காய்ச்சல்') || lower.includes('জ্বর') || lower.includes('તાવ') || lower.includes('ಜ್ವರ') || lower.includes('പനി')
+  ) {
+    return 'fever';
+  }
+
+  // 8. General pain / fatigue
+  if (
+    lower.includes('pain') || lower.includes('ache') || lower.includes('tired') || lower.includes('fatigue') || lower.includes('weak') ||
+    lower.includes('నొప్పి') || lower.includes('నీరసం') || lower.includes('అలసట') ||
+    lower.includes('दर्द') || lower.includes('कमजोरी') || lower.includes('थकान')
+  ) {
+    return 'general_pain';
+  }
+
+  return currentCategory;
+};
+
 export const PatientConversationPage: React.FC = () => {
   const navigate = useNavigate();
   const {
+    symptomCategory,
+    setSymptomCategory,
     interviewAnswers,
     addInterviewAnswer,
     redFlagsDetected,
@@ -107,9 +210,22 @@ export const PatientConversationPage: React.FC = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [typeInputValue, setTypeInputValue] = useState('');
   const [showTypeMode, setShowTypeMode] = useState(false);
+  const [speechNotice, setSpeechNotice] = useState<string | null>(null);
+  const recognitionRef = React.useRef<any>(null);
 
-  const currentQ = questions[Math.min(questionIndex, questions.length - 1)];
-  const isFinishedAll = questionIndex >= questions.length;
+  React.useEffect(() => {
+    return () => {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort();
+        } catch {}
+      }
+    };
+  }, []);
+
+  const activeQuestions = getClinicalQuestions(language, symptomCategory);
+  const currentQ = activeQuestions[Math.min(questionIndex, activeQuestions.length - 1)];
+  const isFinishedAll = questionIndex >= activeQuestions.length;
   const activeQuestionText = dynamicQuestion || currentQ?.question || '';
 
   // Initialize live conversation with backend if intake session exists
@@ -157,26 +273,111 @@ export const PatientConversationPage: React.FC = () => {
 
   const handleStartRecording = () => {
     stopSpeaking();
-    setIsRecording(true);
+    setSpeechNotice(null);
     setTranscript(null);
 
-    // Simulate 2s recording wave
-    setTimeout(() => {
-      setIsRecording(false);
-      setIsTranscribing(true);
+    const SpeechRecognition =
+      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
 
-      // Simulate 1s transcribing
-      setTimeout(() => {
+    if (!SpeechRecognition) {
+      setSpeechNotice(t('convo.noMicSupport'));
+      return;
+    }
+
+    try {
+      if (recognitionRef.current) {
+        recognitionRef.current.abort();
+      }
+
+      const recognition = new SpeechRecognition();
+      recognitionRef.current = recognition;
+
+      const langCode = voiceConfig?.bcp47 || (language === 'te' ? 'te-IN' : language === 'hi' ? 'hi-IN' : 'en-IN');
+      recognition.lang = langCode;
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.maxAlternatives = 1;
+
+      let capturedText = '';
+
+      recognition.onstart = () => {
+        setIsRecording(true);
         setIsTranscribing(false);
-        setTranscript(currentQ?.sampleAnswer || 'I have had chest pain since yesterday.');
-      }, 800);
-    }, 2000);
+      };
+
+      recognition.onresult = (event: any) => {
+        let interim = '';
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
+          if (event.results[i].isFinal) {
+            capturedText += event.results[i][0].transcript;
+          } else {
+            interim += event.results[i][0].transcript;
+          }
+        }
+        const text = (capturedText || interim).trim();
+        if (text) {
+          setTranscript(text);
+          if (questionIndex === 0) {
+            const detected = detectCategory(text, symptomCategory);
+            setSymptomCategory(detected);
+          }
+        }
+      };
+
+      recognition.onerror = (event: any) => {
+        console.warn('Speech recognition error:', event.error);
+        setIsRecording(false);
+        setIsTranscribing(false);
+
+        if (event.error === 'no-speech') {
+          setSpeechNotice(t('convo.noSpeechError'));
+        } else if (event.error === 'not-allowed') {
+          setSpeechNotice(t('convo.micBlocked'));
+        } else {
+          setSpeechNotice(t('convo.noSpeechError'));
+        }
+      };
+
+      recognition.onend = () => {
+        setIsRecording(false);
+        setIsTranscribing(false);
+        if (capturedText) {
+          const trimmed = capturedText.trim();
+          setTranscript(trimmed);
+          if (questionIndex === 0) {
+            const detected = detectCategory(trimmed, symptomCategory);
+            setSymptomCategory(detected);
+          }
+        }
+      };
+
+      recognition.start();
+    } catch (err) {
+      console.error('Failed to start speech recognition:', err);
+      setIsRecording(false);
+      setIsTranscribing(false);
+      setSpeechNotice(t('convo.noMicSupport'));
+    }
+  };
+
+  const handleStopRecording = () => {
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch {}
+    }
+    setIsRecording(false);
   };
 
   const handleConfirmTranscript = async () => {
-    if (!transcript && !typeInputValue) return;
+    const textToSave = (typeInputValue || transcript || '').trim();
+    if (!textToSave) return;
 
-    const textToSave = typeInputValue || transcript || currentQ?.sampleAnswer || '';
+    if (questionIndex === 0) {
+      const detectedCat = detectCategory(textToSave, symptomCategory);
+      setSymptomCategory(detectedCat);
+    }
+    setDynamicQuestion(null);
 
     addInterviewAnswer({
       questionId: currentQ?.id || `q_${questionIndex}`,
@@ -203,7 +404,7 @@ export const PatientConversationPage: React.FC = () => {
             setRedFlagAlertMessage(res.data.red_flags[0].message);
           }
           if (res.data.is_completed) {
-            setQuestionIndex(questions.length);
+            setQuestionIndex(activeQuestions.length);
             await refreshPatientStory();
             return;
           }
@@ -213,10 +414,10 @@ export const PatientConversationPage: React.FC = () => {
       }
     }
 
-    if (questionIndex < questions.length - 1) {
+    if (questionIndex < activeQuestions.length - 1) {
       setQuestionIndex((prev) => prev + 1);
     } else {
-      setQuestionIndex(questions.length);
+      setQuestionIndex(activeQuestions.length);
       await refreshPatientStory();
     }
   };
@@ -242,7 +443,7 @@ export const PatientConversationPage: React.FC = () => {
         {/* Main Guided Interview Center Stage (2 Cols) */}
         <div className="lg:col-span-2 space-y-6">
           {/* Safety Alert for Acute Red-Flags */}
-          {redFlagsDetected && (
+          {redFlagsDetected && symptomCategory === 'chest_pain' && (
             <Card variant="urgent" padding="md" className="border-l-4 border-l-red-600 bg-red-50/90 shadow-md">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3">
@@ -294,9 +495,9 @@ export const PatientConversationPage: React.FC = () => {
                 'uppercase tracking-wider',
                 accessibility.easyMode ? 'text-sm font-black text-amber-900 bg-amber-100 px-3 py-1 rounded-full border border-amber-300' : 'text-xs font-bold text-slate-400'
               )}>
-                {t('convo.questionCount', `Question ${questionIndex + 1} of ${questions.length}`, {
+                {t('convo.questionCount', `Question ${questionIndex + 1} of ${activeQuestions.length}`, {
                   current: questionIndex + 1,
-                  total: questions.length,
+                  total: activeQuestions.length,
                 })}
               </span>
 
@@ -332,17 +533,31 @@ export const PatientConversationPage: React.FC = () => {
                 <div className="w-full space-y-2.5 pt-2 border-t-2 border-slate-200">
                   <div className="flex items-center justify-center gap-1.5 text-xs font-black uppercase tracking-wider text-slate-700">
                     <Sparkles className="w-3.5 h-3.5 text-amber-600" />
-                    <span>Tap Your Answer (Easy Mode)</span>
+                    <span>{t('convo.tapYourAnswer')}</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full">
-                    {(EASY_MODE_OPTIONS[questionIndex] || EASY_MODE_OPTIONS[0]).map((opt) => {
+                    {getDynamicEasyModeOptions(questionIndex, symptomCategory, language).map((opt, optIdx) => {
                       const isSelected = transcript === opt.text;
                       return (
                         <button
                           key={opt.text}
                           type="button"
                           onClick={() => {
+                            setSpeechNotice(null);
                             setTranscript(opt.text);
+                            if (questionIndex === 0) {
+                              const categoryByIndex: SymptomCategory[] = [
+                                'chest_pain',
+                                'fever',
+                                'breathlessness',
+                                'stomach_pain',
+                                'headache',
+                                'leg_pain',
+                                'cough_cold',
+                              ];
+                              const chosenCat = categoryByIndex[optIdx] || detectCategory(opt.text, symptomCategory);
+                              setSymptomCategory(chosenCat);
+                            }
                             speak(`${opt.text}. Tap confirm to proceed.`, true);
                           }}
                           className={cn(
@@ -370,8 +585,8 @@ export const PatientConversationPage: React.FC = () => {
                   {/* Big Microphone Circle */}
                   <button
                     type="button"
-                    onClick={handleStartRecording}
-                    disabled={isRecording || isTranscribing}
+                    onClick={isRecording ? handleStopRecording : handleStartRecording}
+                    disabled={isTranscribing}
                     className={cn(
                       'rounded-full flex flex-col items-center justify-center gap-1 transition-all shadow-lg select-none relative',
                       accessibility.easyMode ? 'w-28 h-28 border-4 border-slate-900' : 'w-24 h-24',
@@ -382,11 +597,15 @@ export const PatientConversationPage: React.FC = () => {
                         : 'bg-brand-700 text-white hover:bg-brand-800 hover:scale-105 active:scale-95'
                     )}
                   >
-                    <Mic className={cn('stroke-[2.5]', accessibility.easyMode ? 'w-12 h-12' : 'w-10 h-10')} />
+                    {isRecording ? (
+                      <MicOff className={cn('stroke-[2.5]', accessibility.easyMode ? 'w-12 h-12' : 'w-10 h-10')} />
+                    ) : (
+                      <Mic className={cn('stroke-[2.5]', accessibility.easyMode ? 'w-12 h-12' : 'w-10 h-10')} />
+                    )}
                   </button>
 
                   <span className={cn(
-                    'font-bold',
+                    'font-bold text-center px-4',
                     accessibility.easyMode ? 'text-sm sm:text-base text-slate-950 font-black' : 'text-xs text-clinical-muted'
                   )}>
                     {isRecording
@@ -394,9 +613,17 @@ export const PatientConversationPage: React.FC = () => {
                       : isTranscribing
                       ? t('convo.micStructuring', 'Transcribing your words...')
                       : accessibility.easyMode
-                      ? 'Or tap microphone to speak your own words'
+                      ? t('convo.orTapMic', 'Or tap microphone to speak your own words')
                       : t('convo.micIdle', 'Tap to speak')}
                   </span>
+
+                  {/* Real-time Speech Guidance & Error Notification */}
+                  {speechNotice && (
+                    <div className="p-3 rounded-xl bg-amber-50 border-2 border-amber-400 text-amber-950 text-xs font-bold max-w-md mx-auto text-center flex items-center justify-center gap-2 shadow-xs">
+                      <AlertTriangle className="w-4 h-4 text-amber-700 shrink-0" />
+                      <span>{speechNotice}</span>
+                    </div>
+                  )}
 
                   {/* Waveform Pulse Animation mockup during recording */}
                   {isRecording && (
@@ -556,7 +783,7 @@ export const PatientConversationPage: React.FC = () => {
                     'bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg px-8 py-5 min-h-[64px] shadow-lg border-2 border-emerald-800 w-full'
                 )}
               >
-                {accessibility.easyMode ? 'CONTINUE TO DOCUMENTS ➔' : t('convo.proceedDocs')}
+                {accessibility.easyMode ? t('convo.continueDocsBtn') : t('convo.proceedDocs')}
               </Button>
             </Card>
           )}

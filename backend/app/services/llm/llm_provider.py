@@ -401,6 +401,16 @@ class MockLLMProvider(LLMProvider):
                 "verification_status": "UNVERIFIED",
                 "patient_response": text,
             })
+        if any(w in lower for w in ["leg pain", "legs pain", "leg", "legs", "knee", "joint", "foot", "ankle", "calf", "kaalla", "kallu", "pair", "ghutne"]):
+            facts.append({
+                "category": OntologyDomain.CHIEF_COMPLAINT.value,
+                "field": "chief_complaint",
+                "value": "leg pain",
+                "normalized_value": "Lower extremity / Leg pain",
+                "confidence": 0.96,
+                "verification_status": "UNVERIFIED",
+                "patient_response": text,
+            })
 
         # 8. Check for Duration / Onset
         match_days = re.search(r"(\d+)\s*(day|days|din|rojulu|week|weeks|hour|hours)", lower)

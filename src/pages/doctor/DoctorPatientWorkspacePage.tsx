@@ -797,6 +797,7 @@ export const DoctorPatientWorkspacePage: React.FC = () => {
         onClose={() => setIsEvidenceOpen(false)}
         fact={selectedFact}
         onVerifyFact={(factId) => verifyFact(factId)}
+        isDoctorView={true}
       />
 
       {/* FHIR Export & Demo Interoperability Modal */}

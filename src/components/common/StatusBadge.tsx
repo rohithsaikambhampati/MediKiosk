@@ -1,3 +1,4 @@
+import { usePatientIntake } from '../../context/PatientIntakeContext';
 import React from 'react';
 import { Badge, BadgeVariant } from './Badge';
 import { CheckCircle2, Clock, AlertCircle, AlertTriangle, HelpCircle } from 'lucide-react';
@@ -12,11 +13,12 @@ export interface StatusBadgeProps {
 }
 
 export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label, size = 'md', className }) => {
+  const { t } = usePatientIntake();
   const config: Record<StatusType, { variant: BadgeVariant; icon: any; defaultLabel: string }> = {
     verified: {
       variant: 'success',
       icon: CheckCircle2,
-      defaultLabel: 'Doctor Verified',
+      defaultLabel: t('badge.doctorVerified', 'Doctor Verified'),
     },
     pending: {
       variant: 'default',
@@ -26,17 +28,17 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, label, size = 
     'needs-verification': {
       variant: 'warning',
       icon: HelpCircle,
-      defaultLabel: 'Needs Doctor Verification',
+      defaultLabel: t('badge.needsVerification', 'Needs Doctor Verification'),
     },
     urgent: {
       variant: 'danger',
       icon: AlertCircle,
-      defaultLabel: 'Immediate Review',
+      defaultLabel: t('badge.urgent', 'Immediate Review'),
     },
     completed: {
       variant: 'brand',
       icon: CheckCircle2,
-      defaultLabel: 'Completed',
+      defaultLabel: t('badge.completed', 'Completed'),
     },
     'in-progress': {
       variant: 'info',

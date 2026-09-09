@@ -1,3 +1,4 @@
+import { SymptomCategory } from "../../constants/translations";
 import { Patient, Doctor, Nurse, Department, RiskAlert } from '../../types/clinical';
 import { MedicalFact, EvidenceSource } from '../../types/evidence';
 import { TimelineEvent } from '../../types/timeline';
@@ -318,4 +319,423 @@ export const MOCK_PATIENT_STORY: PatientStory = {
     verifiedFacts: 4,
     unverifiedFacts: 2,
   },
+};
+
+export const getLocalizedMockStory = (
+  lang: string,
+  identity?: { name?: string; age?: number; gender?: string; mrn?: string },
+  category: SymptomCategory = 'fever'
+): PatientStory => {
+  const patientName = identity?.name || (lang === 'te' ? 'రమేష్ కుమార్' : lang === 'hi' ? 'रमेश कुमार' : 'Ramesh Kumar');
+  const age = identity?.age || 65;
+  const mrn = identity?.mrn || 'patient-ramesh-01';
+  const genderStr = identity?.gender === 'female' ? (lang === 'te' ? 'మహిళ' : lang === 'hi' ? 'महिला' : 'female') : (lang === 'te' ? 'పురుషుడు' : lang === 'hi' ? 'पुरुष' : 'male');
+
+  // Category specific summaries and symptoms
+  let complaint = 'High fever, chills, and weakness';
+  let duration = '2 days (rises in the evening)';
+  let summary = `${patientName}, a ${age}-year-old ${genderStr}, presents with high fever, chills, and severe weakness for the past 2 days.`;
+  let factTitle = 'High fever & chills';
+  let factDetail = 'Fever starting 2 days ago, rising in evenings with body ache.';
+  let factSnippet = 'I have high fever, chills, and weakness since yesterday.';
+
+  if (category === 'chest_pain') {
+    complaint = 'Chest tightness & difficulty breathing';
+    duration = '2 days (exertional onset)';
+    summary = `${patientName}, a ${age}-year-old ${genderStr}, presents with a 2-day history of progressive chest tightness radiating to the left shoulder and shortness of breath.`;
+    factTitle = 'Retrosternal chest tightness';
+    factDetail = 'Pressure-like chest discomfort exacerbated by exertion.';
+    factSnippet = 'I have chest tightness and pressure since yesterday morning.';
+  } else if (category === 'headache') {
+    complaint = 'Severe throbbing headache & dizziness';
+    duration = 'Since yesterday afternoon';
+    summary = `${patientName}, a ${age}-year-old ${genderStr}, presents with severe throbbing headache, dizziness, and light sensitivity.`;
+    factTitle = 'Severe headache & dizziness';
+    factDetail = 'Persistent unilateral throbbing pain with dizziness.';
+    factSnippet = 'I have a severe headache and dizziness.';
+  } else if (category === 'stomach_pain') {
+    complaint = 'Severe abdominal pain & nausea';
+    duration = 'Started 4 hours ago';
+    summary = `${patientName}, a ${age}-year-old ${genderStr}, presents with acute epigastric burning pain and nausea after meals.`;
+    factTitle = 'Epigastric stomach pain';
+    factDetail = 'Burning pain in upper stomach with nausea and acidity.';
+    factSnippet = 'I have severe stomach pain and nausea.';
+  } else if (category === 'breathlessness') {
+    complaint = 'Shortness of breath & wheezing';
+    duration = 'Since last night';
+    summary = `${patientName}, a ${age}-year-old ${genderStr}, presents with exertional dyspnea and nighttime shortness of breath.`;
+    factTitle = 'Dyspnea & respiratory discomfort';
+    factDetail = 'Breathlessness worsening on walking or lying flat.';
+    factSnippet = 'I have shortness of breath and difficulty breathing.';
+  } else if (category === 'leg_pain') {
+    complaint = 'Severe leg pain, knee stiffness & difficulty walking';
+    duration = '2 days (worsened by walking)';
+    summary = `${patientName}, a ${age}-year-old ${genderStr}, presents with bilateral leg and knee pain, joint stiffness, and difficulty walking for the past 2 days.`;
+    factTitle = 'Bilateral leg and knee pain';
+    factDetail = 'Severe pain and stiffness in legs/knees with restricted mobility and difficulty bearing weight.';
+    factSnippet = 'I have severe leg pain, knee stiffness, and difficulty walking.';
+  } else if (category === 'cough_cold') {
+    complaint = 'Persistent cough, cold & sore throat';
+    duration = '3 days (dry cough & runny nose)';
+    summary = `${patientName}, a ${age}-year-old ${genderStr}, presents with persistent irritating cough, sore throat, and nasal congestion for 3 days.`;
+    factTitle = 'Persistent cough & pharyngeal irritation';
+    factDetail = 'Dry irritating cough with throat soreness and mild nasal congestion.';
+    factSnippet = 'I have a persistent cough, cold, and sore throat.';
+  } else if (category === 'general_pain') {
+    complaint = 'Generalized body pain & severe fatigue';
+    duration = 'Started yesterday';
+    summary = `${patientName}, a ${age}-year-old ${genderStr}, presents with generalized muscle aches, fatigue, and weakness.`;
+    factTitle = 'Generalized body ache';
+    factDetail = 'Diffuse body pain and exhaustion following exertion.';
+    factSnippet = 'I have severe body pain, fatigue, and general malaise.';
+  }
+
+  if (lang === 'te') {
+    let teComplaint = 'అధిక జ్వరం, చలి మరియు బలహీనత';
+    let teDuration = '2 రోజులు (సాయంత్రం పెరుగుతోంది)';
+    let teSummary = `${patientName}, ${age} సంవత్సరాల ${genderStr}, గత 2 రోజులుగా అధిక జ్వరం, చలి మరియు తీవ్రమైన నీరసంతో బాధపడుతున్నారు. సంప్రదింపుల కోసం కియోస్క్ ఇంటర్వ్యూ పూర్తి చేశారు.`;
+    let teFactTitle = 'అధిక శరీర ఉష్ణోగ్రత & చలి';
+    let teFactDetail = 'సాయంత్రం వేళల్లో తీవ్రమయ్యే అధిక జ్వరం, శరీర నొప్పులు మరియు అలసట.';
+    let teSnippet = 'నిన్నటి నుండి నాకు అధిక జ్వరం, చలి మరియు నీరసంగా ఉంది.';
+
+    if (category === 'chest_pain') {
+      teComplaint = 'ఛాతీ బిగుతు & శ్వాస తీసుకోవడంలో ఇబ్బంది';
+      teDuration = '2 రోజులు (నిన్నటి నుండి ఎక్కువైంది)';
+      teSummary = `${patientName}, ${age} సంవత్సరాల ${genderStr}, గత 2 రోజులుగా ఎడమ భుజానికి వ్యాపించే ఛాతీ బిగుతు మరియు ఆయాసంతో బాధపడుతున్నారు.`;
+      teFactTitle = 'రెట్రోస్టెర్నల్ ఛాతీ బిగుతు';
+      teFactDetail = 'శారీరక శ్రమ వల్ల పెరిగే ఒత్తిడి వంటి అసౌకర్యం, ప్రతి ఎపిసోడ్ ~20 నిమిషాలు ఉంటుంది.';
+      teSnippet = 'ఛాతీ మధ్యలో బరువు మరియు నొక్కుతున్నట్లు అనిపిస్తోంది.';
+    } else if (category === 'headache') {
+      teComplaint = 'తీవ్రమైన తలనొప్పి మరియు మైకం';
+      teDuration = 'నిన్న మధ్యాహ్నం నుండి';
+      teSummary = `${patientName}, ${age} సంవత్సరాల ${genderStr}, నిన్న మధ్యాహ్నం నుండి తీవ్రమైన తలనొప్పి, మైకం మరియు కాంతి చూస్తే కళ్ళ నొప్పి లక్షణాలతో వచ్చారు.`;
+      teFactTitle = 'తీవ్రమైన తలనొప్పి & మైకం';
+      teFactDetail = 'తలకు ఒక వైపు వచ్చే తీవ్రమైన పోటు, కాంతి చూస్తే ఇబ్బంది.';
+      teSnippet = 'నిన్నటి నుండి నాకు తీవ్రమైన తలనొప్పి మరియు మైకంగా ఉంది.';
+    } else if (category === 'stomach_pain') {
+      teComplaint = 'కడుపులో తీవ్రమైన నొప్పి లేదా వికారం';
+      teDuration = '4 గంటల క్రితం నుండి';
+      teSummary = `${patientName}, ${age} సంవత్సరాల ${genderStr}, భోజనం చేసిన తర్వాత కడుపులో తీవ్రమైన మంట, నొప్పి మరియు వికారంతో బాధపడుతున్నారు.`;
+      teFactTitle = 'కడుపు నొప్పి & వికారం';
+      teFactDetail = 'పై కడుపులో తీవ్రమైన మంట, ఎసిడిటీ మరియు వికారం.';
+      teSnippet = 'నాకు కడుపులో తీవ్రమైన నొప్పి మరియు వికారంగా ఉంది.';
+    } else if (category === 'breathlessness') {
+      teComplaint = 'శ్వాస తీసుకోవడంలో ఇబ్బంది / ఆయాసం';
+      teDuration = 'నిన్న రాత్రి నుండి';
+      teSummary = `${patientName}, ${age} సంవత్సరాల ${genderStr}, నిన్న రాత్రి నుండి శ్వాస తీసుకోవడంలో ఇబ్బంది మరియు ఆయాసంతో బాధపడుతున్నారు.`;
+      teFactTitle = 'శ్వాసకోశ ఇబ్బంది & ఆయాసం';
+      teFactDetail = 'నడుస్తున్నప్పుడు లేదా పడుకున్నప్పుడు ఎక్కువయ్యే శ్వాస ఇబ్బంది.';
+      teSnippet = 'నాకు శ్వాస తీసుకోవడంలో ఇబ్బంది మరియు ఆయాసంగా ఉంది.';
+    } else if (category === 'leg_pain') {
+      teComplaint = 'కాళ్ళ నొప్పులు, మోకాళ్ళ బిగుతు మరియు నడవడంలో ఇబ్బంది';
+      teDuration = '2 రోజులు (నడుస్తుంటే ఎక్కువవుతోంది)';
+      teSummary = `${patientName}, ${age} సంవత్సరాల ${genderStr}, గత 2 రోజులుగా కాళ్ళ నొప్పులు, మోకాళ్ళ బిగుతు మరియు నడవడంలో తీవ్రమైన ఇబ్బందితో బాధపడుతున్నారు.`;
+      teFactTitle = 'కాళ్ళ నొప్పులు & నడవడంలో అసౌకర్యం';
+      teFactDetail = 'రెండు కాళ్ళలో వాపు, మోకాళ్ళ బిగుతు మరియు నడుస్తున్నప్పుడు లేదా నిలబడినప్పుడు తీవ్రమయ్యే నొప్పి.';
+      teSnippet = 'నాకు కాళ్ళ నొప్పులు, మోకాళ్ళ బిగుతు మరియు నడవడంలో ఇబ్బందిగా ఉంది.';
+    } else if (category === 'cough_cold') {
+      teComplaint = 'తీవ్రమైన దగ్గు, జలుబు మరియు గొంతు నొప్పి';
+      teDuration = '3 రోజులు (పొడి దగ్గు మరియు తుమ్ములు)';
+      teSummary = `${patientName}, ${age} సంవత్సరాల ${genderStr}, గత 3 రోజులుగా తీవ్రమైన దగ్గు, జలుబు మరియు గొంతు నొప్పితో బాధపడుతున్నారు.`;
+      teFactTitle = 'తీవ్రమైన దగ్గు & గొంతు మంట';
+      teFactDetail = 'గొంతులో తీవ్రమైన గరగర, పొడి దగ్గు మరియు జలుబు లక్షణాలు.';
+      teSnippet = 'నాకు తీవ్రమైన దగ్గు, జలుబు మరియు గొంతు నొప్పి ఉన్నాయి.';
+    } else if (category === 'general_pain') {
+      teComplaint = 'తీవ్రమైన ఒళ్ళు నొప్పులు మరియు విపరీతమైన అలసట';
+      teDuration = 'నిన్నటి నుండి';
+      teSummary = `${patientName}, ${age} సంవత్సరాల ${genderStr}, నిన్నటి నుండి తీవ్రమైన ఒళ్ళు నొప్పులు మరియు బలహీనతతో బాధపడుతున్నారు.`;
+      teFactTitle = 'తీవ్రమైన ఒళ్ళు నొప్పులు & అలసట';
+      teFactDetail = 'శరీరం అంతటా నొప్పులు మరియు కండరాల బలహీనత.';
+      teSnippet = 'నాకు విపరీతమైన ఒళ్ళు నొప్పులు మరియు తీవ్ర అలసటగా ఉంది.';
+    }
+
+    return {
+      patientId: mrn,
+      generatedAt: 'ఈరోజు ఉదయం 09:20',
+      summaryParagraph: teSummary,
+      chiefComplaint: teComplaint,
+      onsetAndDuration: teDuration,
+      severityScore: '7 / 10 స్థాయి',
+      reportedSymptoms: [
+        {
+          id: 'fact-01',
+          patientId: mrn,
+          category: 'symptom',
+          title: teFactTitle,
+          detail: teFactDetail,
+          extractedDate: 'ఈరోజు',
+          verificationStatus: 'needs-verification',
+          confidence: 'high',
+          sources: [
+            {
+              id: 'src-01',
+              type: 'conversation-transcript',
+              title: 'ఏఐ కియోస్క్ వాయిస్ ఇంటర్వ్యూ - ఈరోజు 09:17 AM',
+              date: 'ఈరోజు',
+              snippetText: teSnippet,
+              confidence: 'high',
+            },
+          ],
+        },
+        {
+          id: 'fact-02',
+          patientId: mrn,
+          category: 'medication',
+          title: 'మెట్‌ఫార్మిన్ 500 mg రోజుకు రెండుసార్లు',
+          detail: 'డయాబెటిస్ కోసం ప్రస్తుత ఓరల్ ఔషధం.',
+          extractedDate: '14 అక్టోబర్ 2024',
+          verificationStatus: 'doctor-verified',
+          confidence: 'high',
+          sources: [
+            {
+              id: 'src-02',
+              type: 'uploaded-document',
+              title: 'సిటీ హాస్పిటల్ రికార్డు 2024',
+              date: '14 అక్టోబర్ 2024',
+              snippetText: 'డిశ్చార్జ్ మందులు: మెట్‌ఫార్మిన్ 500mg రోజుకు రెండుసార్లు.',
+              confidence: 'high',
+            },
+          ],
+        },
+      ],
+      currentMedications: [
+        {
+          id: 'med-01',
+          name: 'మెట్‌ఫార్మిన్',
+          dosage: '500 mg',
+          frequency: 'భోజనం తర్వాత రోజుకు రెండుసార్లు',
+          prescribedDate: '14 అక్టోబర్ 2024',
+          status: 'active',
+          verificationStatus: 'doctor-verified',
+          confidence: 'high',
+        },
+      ],
+      allergies: [
+        {
+          id: 'alg-01',
+          allergen: 'పెన్సిలిన్ / అమోక్సిసిలిన్',
+          reaction: 'తీవ్రమైన శ్వాసకోశ ఇబ్బంది లేదా దద్దుర్లు',
+          severity: 'immediate',
+          verificationStatus: 'doctor-verified',
+          confidence: 'high',
+        },
+      ],
+      abnormalLabs: [
+        {
+          id: 'lab-01',
+          testName: 'HbA1c',
+          resultValue: '8.4',
+          referenceRange: '4.0 - 5.6',
+          unit: '%',
+          isAbnormal: true,
+          date: '14 అక్టోబర్ 2024',
+          verificationStatus: 'doctor-verified',
+          confidence: 'high',
+        },
+      ],
+      medicalTimeline: [
+        {
+          id: 'time-01',
+          patientId: mrn,
+          date: 'ఈరోజు',
+          year: '2026',
+          title: 'కియోస్క్ ఇంటర్వ్యూ పూర్తయింది',
+          type: 'symptom-onset',
+          description: `${teComplaint} కోసం రోగి గైడెడ్ ఇంటర్వ్యూ పూర్తి చేశారు.`,
+          source: {
+            id: 'src-time-01',
+            type: 'patient-self-report',
+            title: 'కియోస్క్ వాయిస్ ఇన్‌టేక్',
+            date: 'ఈరోజు',
+            snippetText: `ఇంటర్వ్యూ: ${teComplaint}`,
+            confidence: 'high',
+          },
+          confidence: 'high',
+          tags: ['ఇంటర్వ్యూ', 'ఇన్‌టేక్'],
+        },
+      ],
+      documents: MOCK_DOCUMENTS,
+      detectedConflicts: [],
+      overallAiConfidence: 'high',
+      verificationProgress: {
+        totalFacts: 3,
+        verifiedFacts: 2,
+        unverifiedFacts: 1,
+      },
+    };
+  }
+
+  if (lang === 'hi') {
+    let hiComplaint = 'तेज बुखार, ठंड लगना और कमजोरी';
+    let hiDuration = '2 दिन (शाम को बढ़ता है)';
+    let hiSummary = `${patientName}, ${age} वर्षीय ${genderStr}, पिछले 2 दिनों से तेज बुखार, ठंड और भारी कमजोरी की शिकायत के साथ परामर्श हेतु आए हैं।`;
+    let hiFactTitle = 'तेज बुखार और ठंड';
+    let hiFactDetail = 'शाम को बढ़ने वाला तेज बुखार, शरीर में दर्द और कमजोरी।';
+    let hiSnippet = 'मुझे कल से तेज बुखार, ठंड लगना और कमजोरी महसूस हो रही है।';
+
+    if (category === 'chest_pain') {
+      hiComplaint = 'सीने में जकड़न और सांस फूलना';
+      hiDuration = '2 दिन (कल से बढ़ा हुआ)';
+      hiSummary = `${patientName}, ${age} वर्षीय ${genderStr}, 2 दिनों से सीने में जकड़न और सांस फूलने की समस्या के साथ आए हैं।`;
+      hiFactTitle = 'रेट्रोस्टर्नल सीने में जकड़न';
+      hiFactDetail = 'शारीरिक परिश्रम से बढ़ने वाला दबाव, प्रति एपिसोड ~20 मिनट रहता है।';
+      hiSnippet = 'सीने के बीच में भारीपन और दबाव महसूस होता है।';
+    } else if (category === 'headache') {
+      hiComplaint = 'तेज सिरदर्द और चक्कर आना';
+      hiDuration = 'कल दोपहर से';
+      hiSummary = `${patientName}, ${age} वर्षीय ${genderStr}, कल दोपहर से लगातार तेज सिरदर्द और चक्कर आने की शिकायत के साथ आए हैं।`;
+      hiFactTitle = 'तेज सिरदर्द और चक्कर';
+      hiFactDetail = 'दाहिनी तरफ तेज टीस मारने वाला दर्द और रोशनी से परेशानी।';
+      hiSnippet = 'मुझे तेज सिरदर्द और चक्कर आ रहे हैं।';
+    } else if (category === 'stomach_pain') {
+      hiComplaint = 'पेट में तेज दर्द और जी मिचलाना';
+      hiDuration = '4 घंटे पहले से';
+      hiSummary = `${patientName}, ${age} वर्षीय ${genderStr}, दोपहर के भोजन के बाद पेट के ऊपरी हिस्से में तेज दर्द और एसिडिटी की शिकायत के साथ आए हैं।`;
+      hiFactTitle = 'पेट दर्द और एसिडिटी';
+      hiFactDetail = 'पेट के ऊपरी हिस्से में तेज जलन और दो बार उल्टी।';
+      hiSnippet = 'मुझे पेट में तेज दर्द और उल्टी जैसा लग रहा है।';
+    } else if (category === 'breathlessness') {
+      hiComplaint = 'सांस लेने में तकलीफ और सांस फूलना';
+      hiDuration = 'कल रात से';
+      hiSummary = `${patientName}, ${age} वर्षीय ${genderStr}, कल रात से सांस फूलने और भारी बेचैनी की शिकायत के साथ आए हैं।`;
+      hiFactTitle = 'सांस लेने में तकलीफ';
+      hiFactDetail = 'सीढ़ियाँ चढ़ने पर या लेटने पर सांस बहुत ज्यादा फूलती है।';
+      hiSnippet = 'मुझे सांस लेने में तकलीफ और सांस फूलने की समस्या है।';
+    } else if (category === 'leg_pain') {
+      hiComplaint = 'पैरों में तेज दर्द, घुटनों में अकड़न और चलने में परेशानी';
+      hiDuration = '2 दिन (चलने पर बढ़ता है)';
+      hiSummary = `${patientName}, ${age} वर्षीय ${genderStr}, पिछले 2 दिनों से दोनों पैरों में दर्द, घुटनों में अकड़न और चलने में असमर्थता की शिकायत के साथ आए हैं।`;
+      hiFactTitle = 'पैरों और घुटनों में दर्द & सूजन';
+      hiFactDetail = 'पैरों में भारी दर्द, जोड़ों में अकड़न और वजन उठाने या चलने में परेशानी।';
+      hiSnippet = 'मुझे पैरों में तेज दर्द, घुटनों में अकड़न और चलने में तकलीफ हो रही है।';
+    } else if (category === 'cough_cold') {
+      hiComplaint = 'तेज खांसी, जुकाम और गले में खराश';
+      hiDuration = '3 दिन (सूखी खांसी और छींकें)';
+      hiSummary = `${patientName}, ${age} वर्षीय ${genderStr}, पिछले 3 दिनों से लगातार खांसी, जुकाम और गले में खराश की शिकायत के साथ आए हैं।`;
+      hiFactTitle = 'तेज खांसी और गले में खराश';
+      hiFactDetail = 'गले में भारी खराश, सूखी खांसी और सर्दी के लक्षण।';
+      hiSnippet = 'मुझे तेज खांसी, जुकाम और गले में खराश है।';
+    } else if (category === 'general_pain') {
+      hiComplaint = 'पूरे शरीर में तेज दर्द और भारी थकान';
+      hiDuration = 'कल से';
+      hiSummary = `${patientName}, ${age} वर्षीय ${genderStr}, कल से पूरे शरीर में दर्द, मांसपेशियों में खिंचाव और कमजोरी की शिकायत के साथ आए हैं।`;
+      hiFactTitle = 'पूरे शरीर में दर्द और कमजोरी';
+      hiFactDetail = 'मांसपेशियों में भारी दर्द और अत्यधिक थकान।';
+      hiSnippet = 'मुझे पूरे शरीर में तेज दर्द और थकान महसूस हो रही है।';
+    }
+
+    return {
+      patientId: mrn,
+      generatedAt: 'आज सुबह 09:20',
+      summaryParagraph: hiSummary,
+      chiefComplaint: hiComplaint,
+      onsetAndDuration: hiDuration,
+      severityScore: '7 / 10 पैमाना',
+      reportedSymptoms: [
+        {
+          id: 'fact-01',
+          patientId: mrn,
+          category: 'symptom',
+          title: hiFactTitle,
+          detail: hiFactDetail,
+          extractedDate: 'आज',
+          verificationStatus: 'needs-verification',
+          confidence: 'high',
+          sources: [
+            {
+              id: 'src-01',
+              type: 'conversation-transcript',
+              title: 'एआई कियोस्क वॉयस साक्षात्कार - 09:17 AM आज',
+              date: 'आज',
+              snippetText: hiSnippet,
+              confidence: 'high',
+            },
+          ],
+        },
+      ],
+      currentMedications: [
+        {
+          id: 'med-01',
+          name: 'मेटफ़ॉर्मिन',
+          dosage: '500 mg',
+          frequency: 'भोजन के बाद दिन में दो बार',
+          prescribedDate: '14 अक्टूबर 2024',
+          status: 'active',
+          verificationStatus: 'doctor-verified',
+          confidence: 'high',
+        },
+      ],
+      allergies: [
+        {
+          id: 'alg-01',
+          allergen: 'पेनिसिलिन',
+          reaction: 'गंभीर सांस फूलना या चकत्ते',
+          severity: 'immediate',
+          verificationStatus: 'doctor-verified',
+          confidence: 'high',
+        },
+      ],
+      abnormalLabs: [],
+      medicalTimeline: [
+        {
+          id: 'time-01',
+          patientId: mrn,
+          date: 'आज',
+          year: '2026',
+          title: 'कियोस्क इनटेक पूरा हुआ',
+          type: 'symptom-onset',
+          description: `${hiComplaint} के लिए साक्षात्कार पूर्ण।`,
+          source: {
+            id: 'src-time-01',
+            type: 'patient-self-report',
+            title: 'कियोस्क वॉयस इनटेक',
+            date: 'आज',
+            snippetText: `इनटेक: ${hiComplaint}`,
+            confidence: 'high',
+          },
+          confidence: 'high',
+          tags: ['साक्षात्कार'],
+        },
+      ],
+      documents: MOCK_DOCUMENTS,
+      detectedConflicts: [],
+      overallAiConfidence: 'high',
+      verificationProgress: {
+        totalFacts: 3,
+        verifiedFacts: 2,
+        unverifiedFacts: 1,
+      },
+    };
+  }
+
+  // Default English
+  return {
+    ...MOCK_PATIENT_STORY,
+    patientId: mrn,
+    chiefComplaint: complaint,
+    onsetAndDuration: duration,
+    summaryParagraph: summary,
+    reportedSymptoms: [
+      {
+        id: 'fact-01',
+        patientId: mrn,
+        category: 'symptom',
+        title: factTitle,
+        detail: factDetail,
+        extractedDate: 'Today',
+        verificationStatus: 'needs-verification',
+        confidence: 'high',
+        sources: [
+          {
+            id: 'src-01',
+            type: 'conversation-transcript',
+            title: 'AI Kiosk Voice Intake - Today 09:17 AM',
+            date: 'Today',
+            snippetText: factSnippet,
+            confidence: 'high',
+          },
+        ],
+      },
+    ],
+  };
 };

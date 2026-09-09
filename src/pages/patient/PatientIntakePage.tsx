@@ -50,13 +50,13 @@ export const PatientIntakePage: React.FC = () => {
             className="w-full max-w-sm p-5 rounded-2xl bg-amber-50 border-3 border-amber-500 shadow-md flex flex-col items-center gap-3 cursor-pointer hover:bg-amber-100 transition-all"
           >
             <div className="text-xs font-black uppercase tracking-wider text-amber-900">
-              Easy Mode — Start Immediately
+              {t('intake.easyModeStartTitle')}
             </div>
             <h3 className="font-black text-xl text-slate-950 text-center">
-              Voice Interview (AI will ask you 4 questions)
+              {t('intake.easyModeStartDesc')}
             </h3>
             <p className="text-sm font-semibold text-slate-700 text-center">
-              Tap here to start right away. We will read each question aloud.
+              {t('intake.easyModeStartHelp')}
             </p>
             <Button
               variant="kiosk"
@@ -64,7 +64,7 @@ export const PatientIntakePage: React.FC = () => {
               rightIcon={ArrowRight}
               className="w-full bg-slate-950 hover:bg-slate-900 text-white font-black text-base px-6 py-4"
             >
-              START VOICE INTERVIEW ➔
+              {t('intake.startInterviewBtn')}
             </Button>
           </div>
         )}
@@ -129,7 +129,7 @@ export const PatientIntakePage: React.FC = () => {
                 'bg-emerald-600 hover:bg-emerald-700 text-white font-black text-lg px-8 py-5 min-h-[60px] shadow-lg border-2 border-emerald-800'
             )}
           >
-            {accessibility.easyMode ? 'START INTERVIEW ➔' : t('intake.startBtn')}
+            {accessibility.easyMode ? t('intake.startInterviewBtn') : t('intake.startBtn')}
           </Button>
         </div>
       </Card>

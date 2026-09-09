@@ -82,9 +82,23 @@ RESPIRATORY_PATHWAY = ClinicalPathway(
     completion_threshold=3,
 )
 
+LEG_PAIN_PATHWAY = ClinicalPathway(
+    name="LEG_PAIN_PATHWAY",
+    chief_complaint_triggers=[
+        "leg pain", "legs pain", "knee pain", "knees pain", "joint pain", "joints pain",
+        "foot pain", "feet pain", "ankle pain", "calf pain", "thigh pain", "body pain",
+        "body ache", "bone pain", "back pain", "walking difficulty", "difficulty walking",
+        "kallu noppi", "kaalla noppulu", "mokaalla noppi", "pair dard", "ghutne me dard", "jodo me dard"
+    ],
+    required_fields=["onset", "duration", "location", "severity"],
+    optional_fields=["swelling", "radiation", "numbness", "mobility_impact"],
+    follow_up_topics=["onset", "duration", "location", "severity", "associated_symptoms", "medical_history", "medications", "allergies"],
+    completion_threshold=3,
+)
+
 GENERAL_PATHWAY = ClinicalPathway(
     name="GENERAL_PATHWAY",
-    chief_complaint_triggers=["fever", "abdominal pain", "body pain", "weakness", "fatigue", "dizziness", "general"],
+    chief_complaint_triggers=["fever", "abdominal pain", "weakness", "fatigue", "dizziness", "general"],
     required_fields=["onset", "duration", "severity"],
     optional_fields=["location", "associated_symptoms", "medical_history", "medications", "allergies"],
     follow_up_topics=["onset", "duration", "severity", "associated_symptoms", "medical_history", "medications", "allergies"],
@@ -95,6 +109,7 @@ ALL_PATHWAYS: List[ClinicalPathway] = [
     CHEST_PAIN_PATHWAY,
     HEADACHE_PATHWAY,
     RESPIRATORY_PATHWAY,
+    LEG_PAIN_PATHWAY,
     GENERAL_PATHWAY,
 ]
 

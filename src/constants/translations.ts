@@ -22,6 +22,161 @@ export const LANGUAGE_VOICE_MAP: Record<string, LanguageVoiceConfig> = {
   ml: { bcp47: 'ml-IN', name: 'മലയാളം (Malayalam)' },
 };
 
+export type SymptomCategory = 'chest_pain' | 'fever' | 'breathlessness' | 'stomach_pain' | 'headache' | 'leg_pain' | 'cough_cold' | 'general_pain';
+
+export const DYNAMIC_CLINICAL_QUESTIONS: Record<string, Record<SymptomCategory, ClinicalQuestionItem[]>> = {
+  en: {
+    chest_pain: [
+      { id: 'q1', question: 'What brings you to the hospital today?', sampleAnswer: 'I have chest tightness and pressure since yesterday morning.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'When did the pain or tightness begin?', sampleAnswer: 'It started yesterday around 10 AM after walking upstairs.', completenessKey: 'duration' },
+      { id: 'q3', question: 'Does the pain move to your arm, shoulder, jaw, or back?', sampleAnswer: 'Yes, it radiates toward my left shoulder and arm.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'Are you experiencing sweating or difficulty breathing?', sampleAnswer: 'Yes, I had heavy sweating and breathlessness while sitting.', completenessKey: 'associated' },
+    ],
+    fever: [
+      { id: 'q1', question: 'What brings you to the hospital today?', sampleAnswer: 'I have high fever, chills, and weakness since yesterday.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'How long have you had fever or high body temperature?', sampleAnswer: 'The fever started 2 days ago and rises every evening.', completenessKey: 'duration' },
+      { id: 'q3', question: 'Do you have cough, sore throat, or body pain with the fever?', sampleAnswer: 'Yes, I have a dry cough and heavy sore throat.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'Are you experiencing vomiting, severe fatigue, or skin rash?', sampleAnswer: 'I feel very weak and nausea when eating.', completenessKey: 'associated' },
+    ],
+    breathlessness: [
+      { id: 'q1', question: 'What brings you to the hospital today?', sampleAnswer: 'I have shortness of breath and difficulty breathing.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'When did your difficulty breathing or shortness of breath begin?', sampleAnswer: 'It started last night while sleeping.', completenessKey: 'duration' },
+      { id: 'q3', question: 'Does the breathlessness get worse when lying down or walking?', sampleAnswer: 'Yes, it gets much worse when I walk or climb stairs.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'Do you have chest wheezing, coughing, or swelling in legs?', sampleAnswer: 'I have wheezing sounds and heavy cough.', completenessKey: 'associated' },
+    ],
+    stomach_pain: [
+      { id: 'q1', question: 'What brings you to the hospital today?', sampleAnswer: 'I have severe stomach pain and nausea.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'When did your stomach pain or abdominal discomfort start?', sampleAnswer: 'It began 4 hours ago after eating lunch.', completenessKey: 'duration' },
+      { id: 'q3', question: 'Is the pain in the upper stomach, lower abdomen, or all over?', sampleAnswer: 'It is burning pain in the upper stomach.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'Do you have nausea, vomiting, acidity, or loose motions?', sampleAnswer: 'Yes, I had two episodes of vomiting and acidity.', completenessKey: 'associated' },
+    ],
+    headache: [
+      { id: 'q1', question: 'What brings you to the hospital today?', sampleAnswer: 'I have a severe headache and dizziness.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'When did your headache or head pressure begin?', sampleAnswer: 'It started yesterday afternoon and hasn\'t stopped.', completenessKey: 'duration' },
+      { id: 'q3', question: 'Is it a throbbing pain on one side, or full head heaviness?', sampleAnswer: 'It is a sharp throbbing pain on the right side.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'Do you have dizziness, vomiting, vision blurriness, or neck stiffness?', sampleAnswer: 'Yes, I feel dizzy and sensitive to light.', completenessKey: 'associated' },
+    ],
+    leg_pain: [
+      { id: 'q1', question: 'What brings you to the hospital today?', sampleAnswer: 'I have severe leg pain, knee stiffness, and difficulty walking.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'When did your leg, knee, or body pain begin, and does it worsen when walking or at rest?', sampleAnswer: 'It started 2 days ago and walking makes the pain much worse.', completenessKey: 'duration' },
+      { id: 'q3', question: 'Is the pain in one leg or both legs, knees, or joints? Is there any swelling, redness, or numbness?', sampleAnswer: 'Both knees and lower legs have swelling and joint stiffness.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'Are you able to walk and bear weight normally, or has the pain limited your mobility?', sampleAnswer: 'I have difficulty standing and walking, need support.', completenessKey: 'associated' },
+    ],
+    cough_cold: [
+      { id: 'q1', question: 'What brings you to the hospital today?', sampleAnswer: 'I have a persistent cough, cold, and sore throat.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'How long have you had this cough, cold, or throat pain?', sampleAnswer: 'It started 3 days ago with sneezing and runny nose.', completenessKey: 'duration' },
+      { id: 'q3', question: 'Is the cough dry or producing phlegm/mucus? Any chest congestion?', sampleAnswer: 'It is a dry persistent cough with heavy throat irritation.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'Do you have fever, shortness of breath, or loss of taste/smell?', sampleAnswer: 'Mild warmth and throat irritation, no breathing difficulty.', completenessKey: 'associated' },
+    ],
+    general_pain: [
+      { id: 'q1', question: 'What brings you to the hospital today?', sampleAnswer: 'I have severe body pain, fatigue, and general malaise.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'When did your body ache or discomfort begin?', sampleAnswer: 'It started yesterday after physical exertion.', completenessKey: 'duration' },
+      { id: 'q3', question: 'Which parts of your body are most painful (back, shoulders, or limbs)?', sampleAnswer: 'Back and legs have severe aching pain.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'Are you experiencing fever, chills, or extreme weakness?', sampleAnswer: 'I feel very weak and tired all over.', completenessKey: 'associated' },
+    ],
+  },
+  hi: {
+    chest_pain: [
+      { id: 'q1', question: 'आज आप अस्पताल किस मुख्य समस्या या लक्षण के कारण आए हैं?', sampleAnswer: 'मुझे कल सुबह से सीने में जकड़न और भारीपन महसूस हो रहा है।', completenessKey: 'complaint' },
+      { id: 'q2', question: 'यह दर्द या जकड़न कब शुरू हुई थी?', sampleAnswer: 'यह कल सुबह लगभग 10 बजे सीढ़ियाँ चढ़ने के बाद शुरू हुआ।', completenessKey: 'duration' },
+      { id: 'q3', question: 'क्या यह दर्द आपके हाथ, कंधे, जबड़े या पीठ की तरफ फैलता है?', sampleAnswer: 'हाँ, यह कभी-कभी मेरे बाएं कंधे और बांह की ओर फैलता है।', completenessKey: 'radiation' },
+      { id: 'q4', question: 'क्या आपको अत्यधिक पसीना आ रहा है या सांस लेने में परेशानी हो रही है?', sampleAnswer: 'हाँ, बैठे रहने पर भी भारी पसीना और सांस फूलने की समस्या हो रही है।', completenessKey: 'associated' },
+    ],
+    fever: [
+      { id: 'q1', question: 'आज आप अस्पताल किस मुख्य समस्या या लक्षण के कारण आए हैं?', sampleAnswer: 'मुझे कल से तेज बुखार, ठंड लगना और कमजोरी महसूस हो रही है।', completenessKey: 'complaint' },
+      { id: 'q2', question: 'आपको बुखार या शरीर में तेज तापमान महसूस हुए कितना समय हुआ है?', sampleAnswer: 'बुखार 2 दिन पहले शुरू हुआ था और हर शाम बढ़ जाता है।', completenessKey: 'duration' },
+      { id: 'q3', question: 'क्या आपको बुखार के साथ खांसी, गले में खराश या शरीर में दर्द है?', sampleAnswer: 'हाँ, मुझे सूखी खांसी और गले में तेज खराश है।', completenessKey: 'radiation' },
+      { id: 'q4', question: 'क्या आपको उल्टी, अत्यधिक थकान, या त्वचा पर चकत्ते की समस्या है?', sampleAnswer: 'बहुत ज्यादा कमजोरी लग रही है और खाना खाने पर जी मिचलाता है।', completenessKey: 'associated' },
+    ],
+    breathlessness: [
+      { id: 'q1', question: 'आज आप अस्पताल किस मुख्य समस्या या लक्षण के कारण आए हैं?', sampleAnswer: 'मुझे सांस लेने में तकलीफ और सांस फूलने की समस्या है।', completenessKey: 'complaint' },
+      { id: 'q2', question: 'आपको सांस लेने में तकलीफ या सांस फूलना कब से शुरू हुआ?', sampleAnswer: 'यह कल रात सोते समय शुरू हुआ था।', completenessKey: 'duration' },
+      { id: 'q3', question: 'क्या सीधे लेटने या चलने-फिरने पर आपकी सांस अधिक फूलती है?', sampleAnswer: 'हाँ, सीढ़ियाँ चढ़ने पर सांस बहुत ज्यादा फूलती है।', completenessKey: 'radiation' },
+      { id: 'q4', question: 'क्या आपको छाती से सीटी जैसी आवाज, खांसी या पैरों में सूजन महसूस हो रही है?', sampleAnswer: 'छाती से सीटी की आवाज आ रही है और तेज खांसी है।', completenessKey: 'associated' },
+    ],
+    stomach_pain: [
+      { id: 'q1', question: 'आज आप अस्पताल किस मुख्य समस्या या लक्षण के कारण आए हैं?', sampleAnswer: 'मुझे पेट में तेज दर्द और उल्टी जैसा लग रहा है।', completenessKey: 'complaint' },
+      { id: 'q2', question: 'आपके पेट में दर्द या बेचैनी कब शुरू हुई थी?', sampleAnswer: 'दोपहर का खाना खाने के 4 घंटे बाद दर्द शुरू हुआ।', completenessKey: 'duration' },
+      { id: 'q3', question: 'क्या यह दर्द ऊपरी पेट में, निचले हिस्से में या पूरे पेट में फैल रहा है?', sampleAnswer: 'पेट के ऊपरी हिस्से में तेज जलन और दर्द है।', completenessKey: 'radiation' },
+      { id: 'q4', question: 'क्या आपको जी मिचलाना, उल्टी, एसिडिटी या दस्त की शिकायत है?', sampleAnswer: 'हाँ, मुझे दो बार उल्टी हुई और एसिडिटी हो रही है।', completenessKey: 'associated' },
+    ],
+    headache: [
+      { id: 'q1', question: 'आज आप अस्पताल किस मुख्य समस्या या लक्षण के कारण आए हैं?', sampleAnswer: 'मुझे तेज सिरदर्द और चक्कर आ रहे हैं।', completenessKey: 'complaint' },
+      { id: 'q2', question: 'आपका सिरदर्द या सिर में भारीपन कब शुरू हुआ था?', sampleAnswer: 'यह कल दोपहर शुरू हुआ था और लगातार बना हुआ है।', completenessKey: 'duration' },
+      { id: 'q3', question: 'क्या यह एक तरफ धड़कने वाला दर्द है या पूरे सिर में भारीपन है?', sampleAnswer: 'दाहिनी तरफ बहुत तेज टीस मारने वाला दर्द है।', completenessKey: 'radiation' },
+      { id: 'q4', question: 'क्या आपको चक्कर आना, उल्टी, धुंधला दिखना या गर्दन में अकड़न महसूस हो रही है?', sampleAnswer: 'हाँ, चक्कर आ रहे हैं और रोशनी से परेशानी हो रही है।', completenessKey: 'associated' },
+    ],
+    leg_pain: [
+      { id: 'q1', question: 'आज आप अस्पताल किस मुख्य समस्या या लक्षण के कारण आए हैं?', sampleAnswer: 'मुझे पैरों में तेज दर्द, घुटनों में अकड़न और चलने में तकलीफ हो रही है।', completenessKey: 'complaint' },
+      { id: 'q2', question: 'आपके पैरों या शरीर में दर्द कब शुरू हुआ, और क्या चलने या आराम करने पर यह बढ़ता है?', sampleAnswer: 'यह 2 दिन पहले शुरू हुआ, चलने पर दर्द बहुत ज्यादा बढ़ जाता है।', completenessKey: 'duration' },
+      { id: 'q3', question: 'क्या दर्द एक पैर में है या दोनों पैरों में, घुटनों या जोड़ों में? क्या कोई सूजन, लालिमा या सुन्नपन है?', sampleAnswer: 'दोनों पैरों और घुटनों में सूजन है और जोड़ों में अकड़न है।', completenessKey: 'radiation' },
+      { id: 'q4', question: 'क्या आप सामान्य रूप से चल पा रहे हैं, या दर्द के कारण खड़े होने और चलने में परेशानी हो रही है?', sampleAnswer: 'खड़े होने और चलने में बहुत दर्द हो रहा है, सहारा लेना पड़ता है।', completenessKey: 'associated' },
+    ],
+    cough_cold: [
+      { id: 'q1', question: 'आज आप अस्पताल किस मुख्य समस्या या लक्षण के कारण आए हैं?', sampleAnswer: 'मुझे तेज खांसी, जुकाम और गले में खराश है।', completenessKey: 'complaint' },
+      { id: 'q2', question: 'आपको यह खांसी, जुकाम या गले में दर्द कितने दिनों से है?', sampleAnswer: 'यह 3 दिन पहले शुरू हुआ था, छींकें और नाक बह रही है।', completenessKey: 'duration' },
+      { id: 'q3', question: 'क्या खांसी सूखी है या बलगम आ रहा है? छाती में जकड़न महसूस हो रही है?', sampleAnswer: 'सूखी खांसी है और गले में भारी खराश है।', completenessKey: 'radiation' },
+      { id: 'q4', question: 'क्या आपको बुखार, सांस फूलना या स्वाद/गंध की कमी महसूस हो रही है?', sampleAnswer: 'हल्का बुखार और गले में जलन है।', completenessKey: 'associated' },
+    ],
+    general_pain: [
+      { id: 'q1', question: 'आज आप अस्पताल किस मुख्य समस्या या लक्षण के कारण आए हैं?', sampleAnswer: 'मुझे पूरे शरीर में तेज दर्द और थकान महसूस हो रही है।', completenessKey: 'complaint' },
+      { id: 'q2', question: 'आपके शरीर में दर्द या बेचैनी कब शुरू हुई?', sampleAnswer: 'कल से शरीर में बहुत ज्यादा दर्द और भारीपन है।', completenessKey: 'duration' },
+      { id: 'q3', question: 'शरीर के किस हिस्से में सबसे ज्यादा दर्द है (कमर, कंधे या पैर)?', sampleAnswer: 'कमर और पैरों में दर्द ज्यादा है।', completenessKey: 'radiation' },
+      { id: 'q4', question: 'क्या आपको बुखार, ठंड लगना या अत्यधिक कमजोरी महसूस हो रही है?', sampleAnswer: 'पूरे शरीर में सुस्ती और कमजोरी है।', completenessKey: 'associated' },
+    ],
+  },
+  te: {
+    chest_pain: [
+      { id: 'q1', question: 'ఈరోజు మీరు ఏ సమస్య లేదా లక్షణాల వల్ల ఆసుపత్రికి వచ్చారు?', sampleAnswer: 'నిన్న ఉదయం నుండి నాకు ఛాతీలో బిగుతు మరియు ఒత్తిడి ఉంది.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'ఈ నొప్పి లేదా బిగుతు ఎప్పుడు మొదలైంది?', sampleAnswer: 'నిన్న ఉదయం 10 గంటల ప్రాంతంలో మెట్లు ఎక్కిన తర్వాత మొదలైంది.', completenessKey: 'duration' },
+      { id: 'q3', question: 'ఈ నొప్పి మీ చేయి, భుజం, దవడ లేదా వెనుక భాగానికి వ్యాపిస్తుందా?', sampleAnswer: 'అవును, ఇది నా ఎడమ భుజం మరియు చేతి వైపు వ్యాపిస్తుంది.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'మీకు విపరీతమైన చెమట లేదా శ్వాస తీసుకోవడంలో ఇబ్బందిగా ఉందా?', sampleAnswer: 'అవును, కూర్చున్నప్పుడు కూడా చెమటలు పట్టడం మరియు ఆయాసంగా ఉంది.', completenessKey: 'associated' },
+    ],
+    fever: [
+      { id: 'q1', question: 'ఈరోజు మీరు ఏ సమస్య లేదా లక్షణాల వల్ల ఆసుపత్రికి వచ్చారు?', sampleAnswer: 'నిన్నటి నుండి నాకు అధిక జ్వరం, చలి మరియు నీరసంగా ఉంది.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'మీకు జ్వరం లేదా అధిక శరీర వేడి ఎన్ని రోజుల నుండి ఉందో చెప్పగలరా?', sampleAnswer: 'జ్వరం 2 రోజుల క్రితం మొదలై ప్రతి సాయంత్రం పెరుగుతోంది.', completenessKey: 'duration' },
+      { id: 'q3', question: 'జ్వరంతో పాటు దగ్గు, గొంతు నొప్పి లేదా ఒళ్ళు నొప్పులు ఉన్నాయా?', sampleAnswer: 'అవును, పొడి దగ్గు మరియు తీవ్రమైన గొంతు నొప్పి ఉంది.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'మీకు వాంతులు, విపరీతమైన నీరసం లేదా చర్మంపై దద్దుర్లు ఉన్నాయా?', sampleAnswer: 'చాలా నీరసంగా ఉంది, తింటే వికారంగా అనిపిస్తోంది.', completenessKey: 'associated' },
+    ],
+    breathlessness: [
+      { id: 'q1', question: 'ఈరోజు మీరు ఏ సమస్య లేదా లక్షణాల వల్ల ఆసుపత్రికి వచ్చారు?', sampleAnswer: 'నాకు శ్వాస తీసుకోవడంలో ఇబ్బంది మరియు ఆయాసం ఉంది.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'మీకు శ్వాస తీసుకోవడంలో ఇబ్బంది లేదా ఆయాసం ఎప్పుడు మొదలైంది?', sampleAnswer: 'ఇది నిన్న రాత్రి నిద్రపోతున్నప్పుడు మొదలైంది.', completenessKey: 'duration' },
+      { id: 'q3', question: 'పడుకున్నప్పుడు లేదా నడుస్తున్నప్పుడు ఆయాసం మరింత ఎక్కువవుతుందా?', sampleAnswer: 'అవును, మెట్లు ఎక్కినప్పుడు లేదా నడిచినప్పుడు చాలా ఎక్కువవుతోంది.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'మీకు ఛాతీలో పిల్లికూతలు, విపరీతమైన దగ్గు లేదా కాళ్ళలో వాపులు ఉన్నాయా?', sampleAnswer: 'ఛాతీలో పిల్లికూతలు మరియు తీవ్రమైన దగ్గు ఉంది.', completenessKey: 'associated' },
+    ],
+    stomach_pain: [
+      { id: 'q1', question: 'ఈరోజు మీరు ఏ సమస్య లేదా లక్షణాల వల్ల ఆసుపత్రికి వచ్చారు?', sampleAnswer: 'నాకు కడుపులో తీవ్రమైన నొప్పి మరియు వికారంగా ఉంది.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'మీ కడుపు నొప్పి లేదా కడుపులో అసౌకర్యం ఎప్పుడు మొదలైంది?', sampleAnswer: 'భోజనం చేసిన 4 గంటల తర్వాత నొప్పి మొదలైంది.', completenessKey: 'duration' },
+      { id: 'q3', question: 'నొప్పి పై కడుపులో ఉందా, పొత్తికడుపులో ఉందా లేదా పొట్ట అంతటా ఉందా?', sampleAnswer: 'పై కడుపులో మంటగా మరియు తీవ్రంగా ఉంది.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'మీకు వికారం, వాంతులు, ఎసిడిటీ లేదా విరేచనాలు ఉన్నాయా?', sampleAnswer: 'అవును, రెండుసార్లు వాంతులు అయ్యాయి మరియు ఎసిడిటీగా ఉంది.', completenessKey: 'associated' },
+    ],
+    headache: [
+      { id: 'q1', question: 'ఈరోజు మీరు ఏ సమస్య లేదా లక్షణాల వల్ల ఆసుపత్రికి వచ్చారు?', sampleAnswer: 'నాకు విపరీతమైన తలనొప్పి మరియు తలతిరగడం ఉంది.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'మీ తలనొప్పి లేదా తలలో బరువుగా అనిపించడం ఎప్పుడు మొదలైంది?', sampleAnswer: 'నిన్న మధ్యాహ్నం మొదలై తగ్గకుండా అలాగే ఉంది.', completenessKey: 'duration' },
+      { id: 'q3', question: 'ఇది ఒక వైపు వచ్చే పోటు నొప్పా, లేక తల అంతటా బరువుగా ఉందా?', sampleAnswer: 'కుడి వైపు విపరీతమైన పోటు నొప్పిగా ఉంది.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'మీకు తలతిరగడం, వాంతులు, చూపు మందగించడం లేదా మెడ బిగుతు ఉందా?', sampleAnswer: 'అవును, తల తిరుగుతోంది మరియు వెలుతురు చూస్తే ఇబ్బందిగా ఉంది.', completenessKey: 'associated' },
+    ],
+    leg_pain: [
+      { id: 'q1', question: 'ఈరోజు మీరు ఏ సమస్య లేదా లక్షణాల వల్ల ఆసుపత్రికి వచ్చారు?', sampleAnswer: 'నాకు కాళ్ళ నొప్పులు, మోకాళ్ళ బిగుతు మరియు నడవడంలో ఇబ్బందిగా ఉంది.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'మీ కాళ్ళ లేదా శరీర నొప్పి ఎప్పుడు మొదలైంది, మరియు నడుస్తున్నప్పుడు లేదా విశ్రాంతిలో నొప్పి పెరుగుతుందా?', sampleAnswer: 'రెండు రోజుల క్రితం మొదలైంది, నడుస్తుంటే నొప్పి చాలా ఎక్కువవుతోంది.', completenessKey: 'duration' },
+      { id: 'q3', question: 'నొప్పి ఒక కాలికా, రెండు కాళ్లకా, మోకాళ్లకా లేదా కీళ్లకా? వాపు, ఎర్రబడటం లేదా తిమ్మిరి ఏమైనా ఉందా?', sampleAnswer: 'రెండు కాళ్లలో మోకాళ్ళ వద్ద వాపు మరియు నడవలేకపోవడం ఉంది.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'మీరు సాధారణంగా నడవగలరా మరియు బరువు మోయగలరా, లేదా నొప్పి వల్ల నడవడం కష్టంగా ఉందా?', sampleAnswer: 'నొప్పి వల్ల నిలబడటం మరియు నడవడం చాలా కష్టంగా ఉంది.', completenessKey: 'associated' },
+    ],
+    cough_cold: [
+      { id: 'q1', question: 'ఈరోజు మీరు ఏ సమస్య లేదా లక్షణాల వల్ల ఆసుపత్రికి వచ్చారు?', sampleAnswer: 'నాకు తీవ్రమైన దగ్గు, జలుబు మరియు గొంతు నొప్పి ఉన్నాయి.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'మీకు ఈ దగ్గు, జలుబు లేదా గొంతు నొప్పి ఎన్ని రోజుల నుండి ఉంది?', sampleAnswer: '3 రోజుల క్రితం మొదలైంది, తుమ్ములు మరియు ముక్కు కారడం ఉంది.', completenessKey: 'duration' },
+      { id: 'q3', question: 'దగ్గు పొడిగా వస్తోందా లేదా కఫం పడుతోందా? ఛాతీలో గరగరలాడుతోందా?', sampleAnswer: 'తీవ్రమైన పొడి దగ్గు మరియు గొంతులో మంటగా ఉంది.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'మీకు జ్వరం, ఆయాసం లేదా వాసన/రుచి తెలియకపోవడం ఏమైనా ఉందా?', sampleAnswer: 'తేలికపాటి వేడి మరియు విపరీతమైన గొంతు నొప్పి ఉంది.', completenessKey: 'associated' },
+    ],
+    general_pain: [
+      { id: 'q1', question: 'ఈరోజు మీరు ఏ సమస్య లేదా లక్షణాల వల్ల ఆసుపత్రికి వచ్చారు?', sampleAnswer: 'నాకు విపరీతమైన ఒళ్ళు నొప్పులు మరియు తీవ్ర అలసటగా ఉంది.', completenessKey: 'complaint' },
+      { id: 'q2', question: 'మీ ఒళ్ళు నొప్పులు లేదా అసౌకర్యం ఎప్పుడు మొదలైంది?', sampleAnswer: 'నిన్నటి నుండి ఒళ్ళు నొప్పులు ఎక్కువగా ఉన్నాయి.', completenessKey: 'duration' },
+      { id: 'q3', question: 'శరీరంలో ఏ భాగాలలో నొప్పి ఎక్కువగా ఉంది (వెన్ను, భుజాలు లేదా కాళ్ళు)?', sampleAnswer: 'వెన్ను మరియు కాళ్లలో నొప్పి ఎక్కువగా ఉంది.', completenessKey: 'radiation' },
+      { id: 'q4', question: 'మీకు జ్వరం, చలి లేదా విపరీతమైన బలహీనత ఏమైనా ఉందా?', sampleAnswer: 'తీవ్రమైన అలసట మరియు నీరసంగా ఉంది.', completenessKey: 'associated' },
+    ],
+  },
+};
+
 export const CLINICAL_QUESTIONS: Record<string, ClinicalQuestionItem[]> = {
   en: [
     {
@@ -431,6 +586,73 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     'story.evidenceBannerTitle': 'Evidence-Linked Patient Record',
     'story.evidenceBannerDesc': 'Every extracted medicine, symptom, and diagnosis is linked directly to source documents or your voice response.',
     'story.proceedReview': 'Proceed to Review & Confirm',
+    // Story & Review Additional Translations
+    'story.interviewBannerTitle': 'Interview-Verified Patient Intake',
+    'story.interviewBannerDesc': 'Every reported symptom, duration, and clinical detail is linked directly to your interview response.',
+    'story.audioOverviewTitle': 'Audio Overview of Your Records',
+    'story.audioOverviewDesc': 'Tap the button to listen to all identified symptoms, medications, and conditions read aloud.',
+    'story.playSummaryAudio': 'Play Summary Audio 🔊',
+    'story.hideConflict': 'Hide Conflict Banner',
+    'story.simulateConflict': 'Simulate Dosage Conflict',
+    'story.conflictDetectedTitle': 'Information Conflict Detected',
+    'story.patientReported': 'Patient reported:',
+    'story.latestPrescription': 'Latest prescription:',
+    'story.dosageReviewNotice': 'Sources contain different dosage values. Please review during doctor consultation.',
+    'story.viewSources': 'View Sources',
+    'story.verified': 'Verified',
+    'story.painSeverity': 'Pain / Severity',
+    'story.extractedSymptoms': 'Extracted Symptoms & Clinical Facts',
+    'story.needsReview': 'Needs Review',
+    'story.conflictsDetected': 'Clinical Conflicts Detected ({count})',
+    'story.currentMedications': 'Current Medications ({count})',
+    'story.allergies': 'Allergies ({count})',
+    'story.reaction': 'Reaction:',
+    'story.documentLabValues': 'Document Lab Values ({count})',
+    'story.advisoryNotice': 'Advisory Notice',
+    'story.ref': 'Ref:',
+    'story.refNotAvailable': 'Reference range not available',
+    'story.labNotice': 'Lab value outside displayed reference range — clinician review recommended.',
+    'story.timelineEvents': 'Longitudinal Medical Timeline ({count} events)',
+    'story.continueFinalConfirm': 'CONTINUE TO FINAL CONFIRMATION ➔',
+    'evidence.patientReported': 'Patient Reported',
+    'evidence.sourcesCount': 'Evidence ({count})',
+    'timeline.abnormal': 'Abnormal Report',
+    'timeline.source': 'Source:',
+    'timeline.evidenceDetail': 'Evidence Detail & Hospital Notes',
+    'timeline.hospitalPhysician': 'Hospital / Physician:',
+    'badge.doctorVerified': 'Doctor Verified',
+    'badge.needsVerification': 'Needs Doctor Verification',
+    'badge.pending': 'Pending Intake',
+    'badge.urgent': 'Immediate Review',
+    'badge.completed': 'Completed',
+    'badge.inProgress': 'In Progress',
+    'badge.highConfidence': 'High AI Confidence',
+    'badge.moderateConfidence': 'Moderate AI Confidence',
+    'review.confirmAlertNurse': 'CONFIRM & ALERT NURSE ➔',
+    'review.hearSummaryTitle': 'Hear Complete Clinical Summary',
+    'review.hearSummaryDesc': 'Listen to all your reported symptoms, medications, and details',
+    'review.playSummary': 'Play Summary 🔊',
+    'review.noPastPrescriptions': 'No past prescriptions uploaded today',
+    'review.noDrugAllergies': 'No drug allergies recorded',
+    'review.noDocsUploaded': 'No documents uploaded today (Interview only intake)',
+    'docProc.analysisComplete': 'Analysis Complete',
+    'docProc.storyReadyDesc': 'Your clinical story is ready. Tap below to view it.',
+    'docProc.viewStoryBtnEasy': 'VIEW YOUR CLINICAL STORY ➔',
+    'intake.easyModeStartTitle': 'Easy Mode — Start Immediately',
+    'intake.easyModeStartDesc': 'Voice Interview (AI will ask you 4 questions)',
+    'intake.easyModeStartHelp': 'Tap here to start right away. We will read each question aloud.',
+    'intake.startInterviewBtn': 'START VOICE INTERVIEW ➔',
+    'docs.skipFastTrackTitle': 'No Papers with you today?',
+    'docs.skipFastTrackDesc': 'Skip Document Upload & Proceed to Review',
+    'docs.skipFastTrackHelp': 'Tap here if you do not have physical prescriptions to scan today. We will proceed straight to your doctor summary.',
+    'docs.skipFastTrackBtn': 'Skip & Continue ➔',
+    'convo.tapYourAnswer': 'Tap Your Answer (Easy Mode)',
+    'convo.orTapMic': 'Or tap microphone to speak your own words',
+    'convo.continueDocsBtn': 'CONTINUE TO DOCUMENTS ➔',
+    'convo.noSpeechError': 'No speech detected. Please tap the mic and speak clearly, or select an option below.',
+    'convo.noMicSupport': 'Voice recognition is not available in this browser. Please tap an option below or type your answer.',
+    'convo.micBlocked': 'Microphone access was denied. Please allow microphone permissions or select an option below.',
+
 
     // Review Screen
     'review.title': 'Review your information',
@@ -628,6 +850,73 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     'story.evidenceBannerTitle': 'प्रमाण-लिंक्ड मेडिकल रिकॉर्ड',
     'story.evidenceBannerDesc': 'प्रत्येक दवा और लक्षण सीधे आपके पर्चे या आवाज के उत्तर से जुड़े हैं।',
     'story.proceedReview': 'समीक्षा और पुष्टि पर जाएं',
+    // Story & Review Additional Translations (Hindi)
+    'story.interviewBannerTitle': 'साक्षात्कार-सत्यापित मरीज़ रिकॉर्ड',
+    'story.interviewBannerDesc': 'प्रत्येक लक्षण, अवधि सीधे आपके साक्षात्कार उत्तर से जुड़े हैं।',
+    'story.audioOverviewTitle': 'आपके रिकॉर्ड का ऑडियो अवलोकन',
+    'story.audioOverviewDesc': 'पहचाने गए लक्षणों, दवाओं और स्थितियों को सुनने के लिए बटन दबाएँ।',
+    'story.playSummaryAudio': 'सारांश सुनें 🔊',
+    'story.hideConflict': 'विसंगति बैनर छुपाएं',
+    'story.simulateConflict': 'खुराक विसंगति सिमुलेट करें',
+    'story.conflictDetectedTitle': 'जानकारी में विसंगति पाई गई',
+    'story.patientReported': 'मरीज़ द्वारा सूचित:',
+    'story.latestPrescription': 'नवीनतम पर्चा:',
+    'story.dosageReviewNotice': 'विभिन्न स्रोतों में अलग-अलग खुराक दर्ज है। डॉक्टर परामर्श में समीक्षा करें।',
+    'story.viewSources': 'स्रोत देखें',
+    'story.verified': 'सत्यापित',
+    'story.painSeverity': 'दर्द / गंभीरता',
+    'story.extractedSymptoms': 'निकाले गए लक्षण और क्लिनिकल तथ्य',
+    'story.needsReview': 'समीक्षा आवश्यक',
+    'story.conflictsDetected': 'क्लिनिकल विसंगतियाँ ({count})',
+    'story.currentMedications': 'वर्तमान दवाएं ({count})',
+    'story.allergies': 'एलर्जी ({count})',
+    'story.reaction': 'प्रतिक्रिया:',
+    'story.documentLabValues': 'दस्तावेज़ लैब परिणाम ({count})',
+    'story.advisoryNotice': 'परामर्श सूचना',
+    'story.ref': 'सीमा:',
+    'story.refNotAvailable': 'संदर्भ सीमा उपलब्ध नहीं',
+    'story.labNotice': 'लैब मान संदर्भ सीमा से बाहर है — डॉक्टर समीक्षा आवश्यक।',
+    'story.timelineEvents': 'मेडिकल टाइमलाइन ({count} घटनाएँ)',
+    'story.continueFinalConfirm': 'अंतिम पुष्टि के लिए आगे बढ़ें ➔',
+    'evidence.patientReported': 'मरीज़ द्वारा सूचित',
+    'evidence.sourcesCount': 'साक्ष्य ({count})',
+    'timeline.abnormal': 'असामान्य रिपोर्ट',
+    'timeline.source': 'स्रोत:',
+    'timeline.evidenceDetail': 'साक्ष्य विवरण और अस्पताल नोट्स',
+    'timeline.hospitalPhysician': 'अस्पताल / चिकित्सक:',
+    'badge.doctorVerified': 'डॉक्टर सत्यापित',
+    'badge.needsVerification': 'डॉक्टर सत्यापन आवश्यक',
+    'badge.pending': 'लंबित',
+    'badge.urgent': 'तत्काल समीक्षा',
+    'badge.completed': 'पूर्ण',
+    'badge.inProgress': 'प्रगति में',
+    'badge.highConfidence': 'उच्च एआई विश्वास',
+    'badge.moderateConfidence': 'मध्यम एआई विश्वास',
+    'review.confirmAlertNurse': 'पुष्टि करें और नर्स को सूचित करें ➔',
+    'review.hearSummaryTitle': 'पूरा क्लिनिकल सारांश सुनें',
+    'review.hearSummaryDesc': 'अपने लक्षणों, दवाओं और विवरणों को बोलकर सुनें',
+    'review.playSummary': 'सारांश सुनें 🔊',
+    'review.noPastPrescriptions': 'आज कोई पुराना पर्चा अपलोड नहीं किया गया',
+    'review.noDrugAllergies': 'कोई दवा एलर्जी दर्ज नहीं है',
+    'review.noDocsUploaded': 'आज कोई दस्तावेज़ अपलोड नहीं हुआ (केवल साक्षात्कार)',
+    'docProc.analysisComplete': 'विश्लेषण पूरा हुआ',
+    'docProc.storyReadyDesc': 'आपकी मेडिकल कहानी तैयार है। देखने के लिए नीचे टैप करें।',
+    'docProc.viewStoryBtnEasy': 'अपनी मेडिकल स्टोरी देखें ➔',
+    'intake.easyModeStartTitle': 'ईज़ी मोड — तुरंत शुरू करें',
+    'intake.easyModeStartDesc': 'वॉयस साक्षात्कार (AI आपसे 4 प्रश्न पूछेगा)',
+    'intake.easyModeStartHelp': 'तुरंत शुरू करने के लिए यहाँ टैप करें। हम प्रत्येक प्रश्न पढ़कर सुनाएंगे।',
+    'intake.startInterviewBtn': 'वॉयस साक्षात्कार शुरू करें ➔',
+    'docs.skipFastTrackTitle': 'आज आपके पास कोई कागजात नहीं हैं?',
+    'docs.skipFastTrackDesc': 'दस्तावेज़ अपलोड छोड़ें और समीक्षा पर जाएं',
+    'docs.skipFastTrackHelp': 'यदि आपके पास आज स्कैन करने के लिए पर्चे नहीं हैं तो यहाँ टैप करें। हम सीधे आपके डॉक्टर सारांश पर जाएंगे।',
+    'docs.skipFastTrackBtn': 'छोड़ें और आगे बढ़ें ➔',
+    'convo.tapYourAnswer': 'अपना उत्तर चुनें (ईज़ी मोड)',
+    'convo.orTapMic': 'या अपने शब्दों में बोलने के लिए माइक दबाएँ',
+    'convo.continueDocsBtn': 'दस्तावेज़ चरण पर आगे बढ़ें ➔',
+    'convo.noSpeechError': 'कुछ सुनाई नहीं दिया। कृपया माइक दबाकर बोलें या नीचे दिए गए विकल्पों में से चुनें।',
+    'convo.noMicSupport': 'वॉयस रिकग्निशन इस ब्राउज़र में उपलब्ध नहीं है। कृपया नीचे दिए गए विकल्पों में से चुनें या टाइप करें।',
+    'convo.micBlocked': 'माइक्रोफ़ोन की अनुमति अस्वीकृत है। कृपया अनुमति दें या नीचे दिए गए विकल्पों में से चुनें।',
+
 
     // Review Screen
     'review.title': 'अपनी जानकारी की समीक्षा करें',
@@ -802,6 +1091,73 @@ export const TRANSLATIONS: Record<string, Record<string, string>> = {
     'story.evidenceBannerTitle': 'ఆధారాలతో కూడిన రికార్డు',
     'story.evidenceBannerDesc': 'ప్రతి అంశం మీ పత్రాలు లేదా వాయిస్ సమాధానాలతో అనుసంధానించబడింది.',
     'story.proceedReview': 'సమీక్షించి నిర్ధారించండి',
+    // Story & Review Additional Translations (Telugu)
+    'story.interviewBannerTitle': 'ఇంటర్వ్యూ ధృవీకరించిన రికార్డు',
+    'story.interviewBannerDesc': 'ప్రతి లక్షణం, వ్యవధి నేరుగా మీ ఇంటర్వ్యూ సమాధానాలతో అనుసంధానించబడింది.',
+    'story.audioOverviewTitle': 'మీ రికార్డుల ఆడియో సారాంశం',
+    'story.audioOverviewDesc': 'గుర్తించబడిన లక్షణాలు మరియు మందుల వివరాలను వినడానికి బటన్ నొక్కండి.',
+    'story.playSummaryAudio': 'సారాంశం వినండి 🔊',
+    'story.hideConflict': 'వ్యత్యాసాల బ్యానర్ దాచు',
+    'story.simulateConflict': 'మోతాదు వ్యత్యాసం అనుకరణ',
+    'story.conflictDetectedTitle': 'సమాచార వ్యత్యాసం గుర్తించబడింది',
+    'story.patientReported': 'రోగి చెప్పినది:',
+    'story.latestPrescription': 'తాజా ప్రిస్క్రిప్షన్:',
+    'story.dosageReviewNotice': 'వివిధ ఆధారాల్లో మోతాదు వివరాలు వేరుగా ఉన్నాయి. డాక్టర్ సంప్రదింపుల్లో సమీక్షించండి.',
+    'story.viewSources': 'ఆధారాలు చూడండి',
+    'story.verified': 'ధృవీకరించబడింది',
+    'story.painSeverity': 'తీవ్రత / నొప్పి',
+    'story.extractedSymptoms': 'గుర్తించిన లక్షణాలు & క్లినికల్ వివరాలు',
+    'story.needsReview': 'పరిశీలన అవసరం',
+    'story.conflictsDetected': 'క్లినికల్ వ్యత్యాసాలు ({count})',
+    'story.currentMedications': 'ప్రస్తుత మందులు ({count})',
+    'story.allergies': 'అలెర్జీలు ({count})',
+    'story.reaction': 'ప్రతిచర్య:',
+    'story.documentLabValues': 'పత్రాల ల్యాబ్ ఫలితాలు ({count})',
+    'story.advisoryNotice': 'సలహా నోటీసు',
+    'story.ref': 'పరిధి:',
+    'story.refNotAvailable': 'రిఫరెన్స్ పరిధి అందుబాటులో లేదు',
+    'story.labNotice': 'ల్యాబ్ విలువ సాధారణ పరిధి వెలుపల ఉంది — వైద్యుల పరిశీలన అవసరం.',
+    'story.timelineEvents': 'మెడికల్ టైమ్‌లైన్ ({count} ఈవెంట్లు)',
+    'story.continueFinalConfirm': 'చివరి నిర్ధారణకు కొనసాగించండి ➔',
+    'evidence.patientReported': 'రోగి నివేదించినది',
+    'evidence.sourcesCount': 'ఆధారాలు ({count})',
+    'timeline.abnormal': 'అసాధారణ నివేదిక',
+    'timeline.source': 'మూలం:',
+    'timeline.evidenceDetail': 'ఆధారాల వివరాలు & ఆసుపత్రి గమనికలు',
+    'timeline.hospitalPhysician': 'ఆసుపత్రి / వైద్యుడు:',
+    'badge.doctorVerified': 'వైద్యులు ధృవీకరించారు',
+    'badge.needsVerification': 'వైద్యుల ధృవీకరణ అవసరం',
+    'badge.pending': 'పెండింగ్',
+    'badge.urgent': 'తక్షణ సమీక్ష',
+    'badge.completed': 'పూర్తయింది',
+    'badge.inProgress': 'పురోగతిలో ఉంది',
+    'badge.highConfidence': 'అధిక ఏఐ విశ్వసనీయత',
+    'badge.moderateConfidence': 'మధ్యస్థ ఏఐ విశ్వసనీయత',
+    'review.confirmAlertNurse': 'నిర్ధారించండి & నర్సుకు తెలియజేయండి ➔',
+    'review.hearSummaryTitle': 'పూర్తి క్లినికల్ సారాంశాన్ని వినండి',
+    'review.hearSummaryDesc': 'నమోదు చేసిన లక్షణాలు, మందులు మరియు వివరాలను వినండి',
+    'review.playSummary': 'సారాంశం వినండి 🔊',
+    'review.noPastPrescriptions': 'ఈరోజు పాత ప్రిస్క్రిప్షన్‌లు అప్‌లోడ్ చేయలేదు',
+    'review.noDrugAllergies': 'ఎటువంటి ఔషధ అలెర్జీలు నమోదు కాలేదు',
+    'review.noDocsUploaded': 'ఈరోజు పత్రాలు అప్‌లోడ్ చేయలేదు (ఇంటర్వ్యూ మాత్రమే)',
+    'docProc.analysisComplete': 'విశ్లేషణ పూర్తయింది',
+    'docProc.storyReadyDesc': 'మీ క్లినికల్ స్టోరీ సిద్ధంగా ఉంది. చూడటానికి కింద నొక్కండి.',
+    'docProc.viewStoryBtnEasy': 'మీ మెడికల్ స్టోరీని చూడండి ➔',
+    'intake.easyModeStartTitle': 'ఈజీ మోడ్ — వెంటనే ప్రారంభించండి',
+    'intake.easyModeStartDesc': 'వాయిస్ ఇంటర్వ్యూ (AI మిమ్మల్ని 4 ప్రశ్నలు అడుగుతుంది)',
+    'intake.easyModeStartHelp': 'వెంటనే ప్రారంభించడానికి ఇక్కడ నొక్కండి. మేము ప్రతి ప్రశ్నను చదివి వినిపిస్తాము.',
+    'intake.startInterviewBtn': 'వాయిస్ ఇంటర్వ్యూ ప్రారంభించండి ➔',
+    'docs.skipFastTrackTitle': 'ఈరోజు మీ దగ్గర కాగితాలు లేవా?',
+    'docs.skipFastTrackDesc': 'పత్రాల అప్‌లోడ్ దాటవేసి సమీక్షకు వెళ్లండి',
+    'docs.skipFastTrackHelp': 'ఈరోజు స్కాన్ చేయడానికి ప్రిస్క్రిప్షన్లు లేకపోతే ఇక్కడ నొక్కండి. మేము నేరుగా మీ డాక్టర్ సారాంశానికి వెళ్తాము.',
+    'docs.skipFastTrackBtn': 'దాటవేసి కొనసాగించండి ➔',
+    'convo.tapYourAnswer': 'మీ సమాధానాన్ని ఎంచుకోండి (ఈజీ మోడ్)',
+    'convo.orTapMic': 'లేదా మీ స్వంత మాటల్లో మాట్లాడటానికి మైక్ నొక్కండి',
+    'convo.continueDocsBtn': 'పత్రాల దశకు కొనసాగించండి ➔',
+    'convo.noSpeechError': 'ఏమీ వినిపించలేదు. దయచేసి మైక్ నొక్కి మాట్లాడండి లేదా కింద ఉన్న ఎంపికలను ఎంచుకోండి.',
+    'convo.noMicSupport': 'వాయిస్ రికగ్నిషన్ ఈ బ్రౌజర్‌లో అందుబాటులో లేదు. దయచేసి ఎంపికలను ఎంచుకోండి లేదా టైప్ చేయండి.',
+    'convo.micBlocked': 'మైక్రోఫోన్ అనుమతి నిరాకరించబడింది. దయచేసి బ్రౌజర్‌లో అనుమతించండి లేదా కింద ఉన్న ఎంపికలను ఎంచుకోండి.',
+
     'review.title': 'మీ సమాచారాన్ని సమీక్షించండి',
     'review.subtitle': 'డాక్టర్‌కు పంపే ముందు వివరాలు సరిగ్గా ఉన్నాయో లేదో తనిఖీ చేయండి.',
     'review.profile': 'రోగి ప్రొఫైల్',
@@ -1864,6 +2220,377 @@ export const getTranslation = (
   return text;
 };
 
-export const getClinicalQuestions = (lang: string): ClinicalQuestionItem[] => {
-  return CLINICAL_QUESTIONS[lang] || CLINICAL_QUESTIONS['en'];
+export const getClinicalQuestions = (lang: string, category: SymptomCategory = 'leg_pain'): ClinicalQuestionItem[] => {
+  const langQuestions = DYNAMIC_CLINICAL_QUESTIONS[lang] || DYNAMIC_CLINICAL_QUESTIONS['en'];
+  return langQuestions[category] || langQuestions['leg_pain'] || langQuestions['chest_pain'] || CLINICAL_QUESTIONS[lang] || CLINICAL_QUESTIONS['en'];
 };
+
+
+export const EASY_MODE_DYNAMIC_OPTIONS: Record<string, Record<number, Partial<Record<SymptomCategory | 'default', { text: string; icon: string }[]>>>> = {
+  en: {
+    0: {
+      default: [
+        { text: 'Chest tightness, pain, or heavy pressure', icon: '🫀' },
+        { text: 'High fever, chills, and weakness', icon: '🌡️' },
+        { text: 'Difficulty breathing / shortness of breath', icon: '💨' },
+        { text: 'Severe stomach pain or nausea', icon: '🤢' },
+        { text: 'Headache, dizziness, or confusion', icon: '🤕' },
+        { text: 'Leg, knee, or body pain (walking difficulty)', icon: '🦵' },
+        { text: 'Cough, cold, and sore throat', icon: '🤧' },
+      ],
+    },
+    1: {
+      default: [
+        { text: 'Just started today (< 24 hours)', icon: '⏱️' },
+        { text: 'Started 1 to 2 days ago', icon: '📅' },
+        { text: 'Started about 1 week ago', icon: '🗓️' },
+        { text: 'Ongoing for more than a month', icon: '⏳' },
+      ],
+    },
+    2: {
+      chest_pain: [
+        { text: 'Spreads to left shoulder, neck, or arm', icon: '➡️' },
+        { text: 'Spreads to back or upper abdomen', icon: '⬆️' },
+        { text: 'Stays localized in chest only (no spread)', icon: '⭕' },
+      ],
+      fever: [
+        { text: 'Dry cough and severe sore throat present', icon: '🗣️' },
+        { text: 'Severe body ache and muscle joint pain', icon: '💪' },
+        { text: 'High fever with chills & shivers', icon: '🥶' },
+        { text: 'No cough or throat pain, only fever', icon: '🤒' },
+      ],
+      breathlessness: [
+        { text: 'Worse when walking or climbing stairs', icon: '🚶‍♂️' },
+        { text: 'Worse when lying down flat in bed', icon: '🛌' },
+        { text: 'Constant breathlessness even at rest', icon: '🛑' },
+      ],
+      stomach_pain: [
+        { text: 'Upper stomach burning pain / acidity', icon: '🔥' },
+        { text: 'Lower abdomen pain or sharp cramping', icon: '⚡' },
+        { text: 'Full abdomen pain & heavy bloating', icon: '🌐' },
+      ],
+      headache: [
+        { text: 'Throbbing pain on one side (migraine)', icon: '💥' },
+        { text: 'Heavy pressure around forehead and eyes', icon: '👁️' },
+        { text: 'Full head heaviness & neck pain', icon: '🤕' },
+      ],
+      leg_pain: [
+        { text: 'Both legs with swelling & stiffness', icon: '🦵' },
+        { text: 'Single leg or knee pain', icon: '🦵' },
+        { text: 'Joint stiffness & back pain', icon: '🦴' },
+        { text: 'Pain when walking, no swelling', icon: '🚶' },
+      ],
+      cough_cold: [
+        { text: 'Dry cough with throat irritation', icon: '🗣️' },
+        { text: 'Cough with mucus / phlegm', icon: '🫁' },
+        { text: 'Runny nose and sneezing', icon: '🤧' },
+      ],
+      general_pain: [
+        { text: 'Generalized body ache & joint stiffness', icon: '💪' },
+        { text: 'Back and shoulder muscle pain', icon: '🦴' },
+        { text: 'Extreme fatigue and muscle weakness', icon: '😴' },
+      ],
+      default: [
+        { text: 'Both legs with swelling & stiffness', icon: '🦵' },
+        { text: 'Single leg or knee pain', icon: '🦵' },
+        { text: 'Pain when walking, no swelling', icon: '🚶' },
+      ],
+    },
+    3: {
+      chest_pain: [
+        { text: 'Heavy sweating & breathlessness present', icon: '💦' },
+        { text: 'Nausea or cold clammy skin', icon: '🤢' },
+        { text: 'No sweating or breathlessness', icon: '❌' },
+      ],
+      fever: [
+        { text: 'Nausea or vomiting present', icon: '🤢' },
+        { text: 'Extreme fatigue and skin rash', icon: '😴' },
+        { text: 'No vomiting or skin rash', icon: '❌' },
+      ],
+      breathlessness: [
+        { text: 'Wheezing sound in chest & severe cough', icon: '🌬️' },
+        { text: 'Swelling in legs or feet present', icon: '🦶' },
+        { text: 'No wheezing or leg swelling', icon: '❌' },
+      ],
+      stomach_pain: [
+        { text: 'Nausea, vomiting, or acid reflux', icon: '🤢' },
+        { text: 'Loose motions / diarrhea present', icon: '💧' },
+        { text: 'No vomiting or loose motions', icon: '❌' },
+      ],
+      headache: [
+        { text: 'Dizziness, vertigo, or vomiting', icon: '🌀' },
+        { text: 'Sensitivity to light & neck stiffness', icon: '💡' },
+        { text: 'No dizziness or neck stiffness', icon: '❌' },
+      ],
+      leg_pain: [
+        { text: 'Walking is very painful / need support', icon: '🩼' },
+        { text: 'Numbness or tingling sensation present', icon: '⚡' },
+        { text: 'Can walk slowly, no numbness', icon: '🚶' },
+      ],
+      cough_cold: [
+        { text: 'Mild fever & body ache present', icon: '🤒' },
+        { text: 'Chest heaviness when coughing', icon: '🫁' },
+        { text: 'No fever or breathlessness', icon: '❌' },
+      ],
+      general_pain: [
+        { text: 'Difficulty getting out of bed', icon: '🛌' },
+        { text: 'Mild feverish feeling & exhaustion', icon: '🤒' },
+        { text: 'No fever, manageable body ache', icon: '✅' },
+      ],
+      default: [
+        { text: 'Walking is very painful / need support', icon: '🩼' },
+        { text: 'Numbness or tingling sensation present', icon: '⚡' },
+        { text: 'Can walk slowly, no numbness', icon: '🚶' },
+      ],
+    },
+  },
+  hi: {
+    0: {
+      default: [
+        { text: 'सीने में जकड़न, दर्द या भारीपन', icon: '🫀' },
+        { text: 'तेज बुखार, ठंड लगना और कमजोरी', icon: '🌡️' },
+        { text: 'सांस लेने में तकलीफ / सांस फूलना', icon: '💨' },
+        { text: 'पेट में तेज दर्द या जी मिचलाना', icon: '🤢' },
+        { text: 'सिरदर्द, चक्कर आना या भ्रम', icon: '🤕' },
+        { text: 'पैरों, घुटनों या शरीर में दर्द (चलने में तकलीफ)', icon: '🦵' },
+        { text: 'खांसी, जुकाम और गले में खराश', icon: '🤧' },
+      ],
+    },
+    1: {
+      default: [
+        { text: 'आज ही शुरू हुआ (< 24 घंटे)', icon: '⏱️' },
+        { text: '1 से 2 दिन पहले शुरू हुआ', icon: '📅' },
+        { text: 'लगभग 1 सप्ताह पहले शुरू हुआ', icon: '🗓️' },
+        { text: 'एक महीने से अधिक समय से जारी है', icon: '⏳' },
+      ],
+    },
+    2: {
+      chest_pain: [
+        { text: 'बाएं कंधे, गर्दन या बांह की तरफ फैलता है', icon: '➡️' },
+        { text: 'पीठ या ऊपरी पेट की तरफ फैलता है', icon: '⬆️' },
+        { text: 'केवल छाती में ही सीमित है (फैलता नहीं)', icon: '⭕' },
+      ],
+      fever: [
+        { text: 'सूखी खांसी और गले में तेज खराश', icon: '🗣️' },
+        { text: 'पूरे शरीर और जोड़ों में तेज दर्द', icon: '💪' },
+        { text: 'कंपकंपी के साथ तेज बुखार', icon: '🥶' },
+        { text: 'खांसी नहीं है, केवल बुखार है', icon: '🤒' },
+      ],
+      breathlessness: [
+        { text: 'चलने या सीढ़ियाँ चढ़ने पर अधिक होता है', icon: '🚶‍♂️' },
+        { text: 'सीधे लेटने पर सांस अधिक फूलती है', icon: '🛌' },
+        { text: 'बैठे रहने पर भी सांस फूलती है', icon: '🛑' },
+      ],
+      stomach_pain: [
+        { text: 'ऊपरी पेट में तेज जलन और दर्द', icon: '🔥' },
+        { text: 'निचले पेट में तेज मरोड़ या दर्द', icon: '⚡' },
+        { text: 'पूरे पेट में भारीपन और सूजन', icon: '🌐' },
+      ],
+      headache: [
+        { text: 'एक तरफ धड़कने वाला तेज दर्द (माइग्रेन)', icon: '💥' },
+        { text: 'माथे और आँखों के आसपास भारी दबाव', icon: '👁️' },
+        { text: 'पूरे सिर में भारीपन और गर्दन में दर्द', icon: '🤕' },
+      ],
+      leg_pain: [
+        { text: 'दोनों पैरों में सूजन और जोड़ों में अकड़न', icon: '🦵' },
+        { text: 'एक पैर या घुटने में दर्द', icon: '🦵' },
+        { text: 'जोड़ों में अकड़न और कमर दर्द', icon: '🦴' },
+        { text: 'सूजन नहीं है, चलने पर दर्द होता है', icon: '🚶' },
+      ],
+      cough_cold: [
+        { text: 'सूखी खांसी और गले में खराश', icon: '🗣️' },
+        { text: 'बलगम वाली खांसी और सीने में जकड़न', icon: '🫁' },
+        { text: 'नाक बहना और छींकें आना', icon: '🤧' },
+      ],
+      general_pain: [
+        { text: 'पूरे शरीर में दर्द और मांसपेशियों में खिंचाव', icon: '💪' },
+        { text: 'कमर और कंधों में भारी दर्द', icon: '🦴' },
+        { text: 'अत्यधिक कमजोरी और थकान', icon: '😴' },
+      ],
+      default: [
+        { text: 'दोनों पैरों में सूजन और जोड़ों में अकड़न', icon: '🦵' },
+        { text: 'एक पैर या घुटने में दर्द', icon: '🦵' },
+        { text: 'सूजन नहीं है, चलने पर दर्द होता है', icon: '🚶' },
+      ],
+    },
+    3: {
+      chest_pain: [
+        { text: 'अत्यधिक पसीना और सांस फूलना', icon: '💦' },
+        { text: 'जी मिचलाना या ठंडी चिपचिपी त्वचा', icon: '🤢' },
+        { text: 'पसीना या सांस फूलने की समस्या नहीं', icon: '❌' },
+      ],
+      fever: [
+        { text: 'जी मिचलाना या उल्टी होना', icon: '🤢' },
+        { text: 'अत्यधिक कमजोरी और त्वचा पर चकत्ते', icon: '😴' },
+        { text: 'उल्टी या चकत्ते नहीं हैं', icon: '❌' },
+      ],
+      breathlessness: [
+        { text: 'छाती से सीटी जैसी आवाज और तेज खांसी', icon: '🌬️' },
+        { text: 'पैरों या पंजों में सूजन है', icon: '🦶' },
+        { text: 'सीटी की आवाज या सूजन नहीं है', icon: '❌' },
+      ],
+      stomach_pain: [
+        { text: 'उल्टी, जी मिचलाना या एसिडिटी', icon: '🤢' },
+        { text: 'दस्त या पेट खराब होना', icon: '💧' },
+        { text: 'उल्टी या दस्त नहीं हैं', icon: '❌' },
+      ],
+      headache: [
+        { text: 'चक्कर आना या उल्टी जैसा लगना', icon: '🌀' },
+        { text: 'रोशनी से परेशानी और गर्दन में अकड़न', icon: '💡' },
+        { text: 'चक्कर या गर्दन अकड़न नहीं है', icon: '❌' },
+      ],
+      leg_pain: [
+        { text: 'चलना बहुत मुश्किल है / सहारे की जरूरत', icon: '🩼' },
+        { text: 'पैरों में झनझनाहट या सुन्नपन है', icon: '⚡' },
+        { text: 'धीरे-धीरे चल सकते हैं, कोई सुन्नपन नहीं', icon: '🚶' },
+      ],
+      cough_cold: [
+        { text: 'हल्का बुखार और शरीर दर्द है', icon: '🤒' },
+        { text: 'खांसते समय छाती में भारीपन', icon: '🫁' },
+        { text: 'बुखार या सांस फूलना नहीं है', icon: '❌' },
+      ],
+      general_pain: [
+        { text: 'बिस्तर से उठने में परेशानी', icon: '🛌' },
+        { text: 'हल्का बुखार और भारी थकान', icon: '🤒' },
+        { text: 'बुखार नहीं है, सामान्य दर्द है', icon: '✅' },
+      ],
+      default: [
+        { text: 'चलना बहुत मुश्किल है / सहारे की जरूरत', icon: '🩼' },
+        { text: 'पैरों में झनझनाहट या सुन्नपन है', icon: '⚡' },
+        { text: 'धीरे-धीरे चल सकते हैं, कोई सुन्नपन नहीं', icon: '🚶' },
+      ],
+    },
+  },
+  te: {
+    0: {
+      default: [
+        { text: 'ఛాతీలో బిగుతు, నొప్పి లేదా తీవ్రమైన ఒత్తిడి', icon: '🫀' },
+        { text: 'అధిక జ్వరం, చలి మరియు తీవ్రమైన నీరసం', icon: '🌡️' },
+        { text: 'శ్వాస తీసుకోవడంలో ఇబ్బంది లేదా ఆయాసం', icon: '💨' },
+        { text: 'కడుపులో తీవ్రమైన నొప్పి లేదా వికారం', icon: '🤢' },
+        { text: 'తలనొప్పి, తలతిరగడం లేదా మైకం', icon: '🤕' },
+        { text: 'కాళ్ళు, మోకాళ్ళు లేదా శరీర నొప్పులు (నడవడంలో ఇబ్బంది)', icon: '🦵' },
+        { text: 'తీవ్రమైన దగ్గు, జలుబు మరియు గొంతు నొప్పి', icon: '🤧' },
+      ],
+    },
+    1: {
+      default: [
+        { text: 'ఈరోజే మొదలైంది (< 24 గంటలు)', icon: '⏱️' },
+        { text: '1 నుండి 2 రోజుల క్రితం మొదలైంది', icon: '📅' },
+        { text: 'దాదాపు 1 వారం క్రితం మొదలైంది', icon: '🗓️' },
+        { text: 'నెల కంటే ఎక్కువ రోజులుగా ఉంది', icon: '⏳' },
+      ],
+    },
+    2: {
+      chest_pain: [
+        { text: 'ఎడమ భుజం, మెడ లేదా చేతికి వ్యాపిస్తుంది', icon: '➡️' },
+        { text: 'వెన్ను లేదా పై కడుపు వైపు వ్యాపిస్తుంది', icon: '⬆️' },
+        { text: 'ఛాతీలోనే ఉంది (ఇతర భాగాలకు వ్యాపించట్లేదు)', icon: '⭕' },
+      ],
+      fever: [
+        { text: 'పొడి దగ్గు మరియు తీవ్రమైన గొంతు నొప్పి ఉంది', icon: '🗣️' },
+        { text: 'తీవ్రమైన ఒళ్ళు నొప్పులు & కీళ్ళ నొప్పులు', icon: '💪' },
+        { text: 'చలి & వణుకుతో కూడిన అధిక జ్వరం', icon: '🥶' },
+        { text: 'దగ్గు లేదు, కేవలం జ్వరం మాత్రమే ఉంది', icon: '🤒' },
+      ],
+      breathlessness: [
+        { text: 'నడుస్తున్నప్పుడు లేదా మెట్లు ఎక్కినప్పుడు ఎక్కువవుతోంది', icon: '🚶‍♂️' },
+        { text: 'పడుకున్నప్పుడు ఆయాసం మరింత ఎక్కువవుతోంది', icon: '🛌' },
+        { text: 'విశ్రాంతిలో ఉన్నప్పుడు కూడా ఆయాసం ఉంది', icon: '🛑' },
+      ],
+      stomach_pain: [
+        { text: 'పై కడుపులో తీవ్రమైన మంట / ఎసిడిటీ', icon: '🔥' },
+        { text: 'పొత్తికడుపులో తీవ్రమైన నొప్పి లేదా తిమ్మిరి', icon: '⚡' },
+        { text: 'పొట్ట అంతా ఉబ్బరం మరియు నొప్పి', icon: '🌐' },
+      ],
+      headache: [
+        { text: 'ఒక వైపు మాత్రమే వచ్చే తీవ్రమైన పోటు (మైగ్రేన్)', icon: '💥' },
+        { text: 'నుదురు మరియు కళ్ళ చుట్టూ తీవ్ర ఒత్తిడి', icon: '👁️' },
+        { text: 'తల అంతా బరువుగా మరియు మెడ నొప్పి', icon: '🤕' },
+      ],
+      leg_pain: [
+        { text: 'రెండు కాళ్లలో వాపు మరియు కీళ్ళ బిగుతు', icon: '🦵' },
+        { text: 'ఒక కాలు లేదా మోకాలి నొప్పి', icon: '🦵' },
+        { text: 'కీళ్ళ నొప్పులు మరియు వెన్నునొప్పి', icon: '🦴' },
+        { text: 'వాపు లేదు, నడుస్తున్నప్పుడు మాత్రమే నొప్పి', icon: '🚶' },
+      ],
+      cough_cold: [
+        { text: 'పొడి దగ్గు మరియు గొంతు మంట', icon: '🗣️' },
+        { text: 'కఫంతో కూడిన దగ్గు మరియు ఛాతీలో బరువు', icon: '🫁' },
+        { text: 'ముక్కు కారడం మరియు తుమ్ములు', icon: '🤧' },
+      ],
+      general_pain: [
+        { text: 'శరీరం మొత్తం నొప్పులు మరియు కండరాల బిగుతు', icon: '💪' },
+        { text: 'వెన్ను మరియు భుజాలలో తీవ్రమైన నొప్పి', icon: '🦴' },
+        { text: 'తీవ్రమైన అలసట మరియు కండరాల బలహీనత', icon: '😴' },
+      ],
+      default: [
+        { text: 'రెండు కాళ్లలో వాపు మరియు కీళ్ళ బిగుతు', icon: '🦵' },
+        { text: 'ఒక కాలు లేదా మోకాలి నొప్పి', icon: '🦵' },
+        { text: 'వాపు లేదు, నడుస్తున్నప్పుడు మాత్రమే నొప్పి', icon: '🚶' },
+      ],
+    },
+    3: {
+      chest_pain: [
+        { text: 'విపరీతమైన చెమట మరియు ఆయాసం ఉంది', icon: '💦' },
+        { text: 'వికారం లేదా చల్లని చెమటలు', icon: '🤢' },
+        { text: 'చెమటలు లేదా ఆయాసం ఏమీ లేదు', icon: '❌' },
+      ],
+      fever: [
+        { text: 'వికారం లేదా వాంతులు ఉన్నాయి', icon: '🤢' },
+        { text: 'తీవ్రమైన అలసట మరియు చర్మంపై దద్దుర్లు', icon: '😴' },
+        { text: 'వాంతులు లేదా దద్దుర్లు ఏమీ లేవు', icon: '❌' },
+      ],
+      breathlessness: [
+        { text: 'ఛాతీలో పిల్లికూతలు & తీవ్రమైన దగ్గు', icon: '🌬️' },
+        { text: 'కాళ్ళలో లేదా పాదాలలో వాపులు ఉన్నాయి', icon: '🦶' },
+        { text: 'పిల్లికూతలు లేదా వాపులు ఏమీ లేవు', icon: '❌' },
+      ],
+      stomach_pain: [
+        { text: 'వికారం, వాంతులు లేదా ఎసిడిటీ ఉంది', icon: '🤢' },
+        { text: 'విరేచనాలు / మోషన్స్ అవుతున్నాయి', icon: '💧' },
+        { text: 'వాంతులు లేదా విరేచనాలు ఏమీ లేవు', icon: '❌' },
+      ],
+      headache: [
+        { text: 'తలతిరగడం, మైకం లేదా వాంతులు', icon: '🌀' },
+        { text: 'వెలుతురు చూస్తే నొప్పి & మెడ బిగుతు', icon: '💡' },
+        { text: 'తలతిరగడం లేదా మెడ బిగుతు ఏమీ లేదు', icon: '❌' },
+      ],
+      leg_pain: [
+        { text: 'నడవడం చాలా కష్టంగా ఉంది / సహాయం అవసరం', icon: '🩼' },
+        { text: 'కాళ్లలో తిమ్మిరి లేదా స్పర్శ తగ్గడం ఉంది', icon: '⚡' },
+        { text: 'నెమ్మదిగా నడవగలను, తిమ్మిరి లేదు', icon: '🚶' },
+      ],
+      cough_cold: [
+        { text: 'తేలికపాటి జ్వరం & ఒళ్ళు నొప్పులు ఉన్నాయి', icon: '🤒' },
+        { text: 'దగ్గినప్పుడు ఛాతీలో బరువుగా ఉంది', icon: '🫁' },
+        { text: 'జ్వరం లేదా ఆయాసం ఏమీ లేదు', icon: '❌' },
+      ],
+      general_pain: [
+        { text: 'మంచం దిగడం కూడా కష్టంగా ఉంది', icon: '🛌' },
+        { text: 'తేలికపాటి జ్వరం మరియు నీరసం', icon: '🤒' },
+        { text: 'జ్వరం లేదు, సాధారణ ఒళ్ళు నొప్పులు మాత్రమే', icon: '✅' },
+      ],
+      default: [
+        { text: 'నడవడం చాలా కష్టంగా ఉంది / సహాయం అవసరం', icon: '🩼' },
+        { text: 'కాళ్లలో తిమ్మిరి లేదా స్పర్శ తగ్గడం ఉంది', icon: '⚡' },
+        { text: 'నెమ్మదిగా నడవగలను, తిమ్మిరి లేదు', icon: '🚶' },
+      ],
+    },
+  },
+};
+
+export const getDynamicEasyModeOptions = (
+  step: number,
+  category: SymptomCategory = 'leg_pain',
+  lang: string = 'en'
+): { text: string; icon: string }[] => {
+  const langOptions = EASY_MODE_DYNAMIC_OPTIONS[lang] || EASY_MODE_DYNAMIC_OPTIONS['en'];
+  const stepOptions = langOptions[step] || langOptions[0];
+  if (!stepOptions) return [];
+  if (step === 0 || step === 1) {
+    return stepOptions.default || [];
+  }
+  return stepOptions[category] || stepOptions['leg_pain'] || stepOptions.default || [];
+};
+

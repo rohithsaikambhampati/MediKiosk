@@ -30,17 +30,21 @@ export const PatientReviewPage: React.FC = () => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const chiefConcernSummary = interviewAnswers.length > 0
+    ? interviewAnswers.map((a) => a.answer).join(' • ')
+    : 'Standard clinical consultation';
+
   const handleReadSummaryAloud = () => {
     const reviewPrompts: Record<string, string> = {
-      en: `Review summary for ${identity.name || 'Patient'}. Chief Concern: Chest tightness and pressure since yesterday, radiating toward left arm with sweating. Uploaded documents: ${uploadedDocs.length} documents. Please confirm your review to alert the nurse and receive your token.`,
-      hi: `मरीज़ ${identity.name || ''} की मेडिकल समीक्षा। मुख्य समस्या: कल से सीने में जकड़न और पसीना आना। अपलोड किए गए दस्तावेज़: ${uploadedDocs.length}। कृपया पुष्टि करें और नर्स को सूचित करें।`,
-      te: `రోగి ${identity.name || ''} మెడికల్ సమీక్ష. ముఖ్య సమస్య: నిన్నటి నుండి ఛాతీలో బిగుతు మరియు చెమటలు. అప్‌లోడ్ చేసిన పత్రాలు: ${uploadedDocs.length}. దయచేసి ధృవీకరించి నర్సును అప్రమత్తం చేయండి.`,
-      ta: `நோயாளி ${identity.name || ''} மருத்துவ சரிபார்ப்பு. முக்கிய பிரச்சனை: நெஞ்சு இறுக்கம் மற்றும் வியர்வை. பதிவேற்றிய ஆவணங்கள்: ${uploadedDocs.length}. சரிபார்த்து செவிலியருக்கு தெரிவிக்கவும்.`,
-      bn: `রোগী ${identity.name || ''}-এর চিকিৎসা পর্যালোচনা। প্রধান সমস্যা: গতকাল থেকে বুকে অস্বস্তি ও ঘাম। আপলোড করা নথি: ${uploadedDocs.length}। নিশ্চিত করুন।`,
-      mr: `रुग्ण ${identity.name || ''} वैद्यकीय तपासणी. मुख्य त्रास: कालपासून छातीत जडपणा आणि घाम येणे. दस्तऐवज: ${uploadedDocs.length}. पुष्टी करा.`,
-      gu: `દર્દી ${identity.name || ''} મેડિકલ સમીક્ષા. મુખ્ય તકલીફ: ગઈકાલથી છાતીમાં દબાણ અને પરસેવો. દસ્તાવેજો: ${uploadedDocs.length}. પુષ્ટિ કરો.`,
-      kn: `ರೋಗಿ ${identity.name || ''} ವೈದ್ಯಕೀಯ ಪರಿಶೀಲನೆ. ಪ್ರಮುಖ ಸಮಸ್ಯೆ: ನಿನ್ನೆಯಿಂದ ಎದೆಯಲ್ಲಿ ಬಿಗಿತ. ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ದಾಖಲೆಗಳು: ${uploadedDocs.length}. ಖಚಿತಪಡಿಸಿ.`,
-      ml: `രോഗി ${identity.name || ''} മെഡിക്കൽ സംഗ്രഹം. പ്രധാന പ്രശ്നം: നെഞ്ചിൽ വലിവും വിയർപ്പും. രേഖകൾ: ${uploadedDocs.length}. സ്ഥിരീകരിക്കുക.`,
+      en: `Review summary for ${identity.name || 'Patient'}. Chief Concern: ${chiefConcernSummary}. Uploaded documents: ${uploadedDocs.length} documents. Please confirm your review to alert the nurse and receive your token.`,
+      hi: `मरीज़ ${identity.name || ''} की मेडिकल समीक्षा। मुख्य समस्या: ${chiefConcernSummary}। अपलोड किए गए दस्तावेज़: ${uploadedDocs.length}। कृपया पुष्टि करें।`,
+      te: `రోగి ${identity.name || ''} మెడికల్ సమీక్ష. ముఖ్య సమస్య: ${chiefConcernSummary}. అప్‌లోడ్ చేసిన పత్రాలు: ${uploadedDocs.length}. దయచేసి ధృవీకరించండి.`,
+      ta: `நோயாளி ${identity.name || ''} மருத்துவ சரிபார்ப்பு. முக்கிய பிரச்சனை: ${chiefConcernSummary}. பதிவேற்றிய ஆவணங்கள்: ${uploadedDocs.length}. சரிபார்க்கவும்.`,
+      bn: `রোগী ${identity.name || ''}-এর চিকিৎসা পর্যালোচনা। প্রধান সমস্যা: ${chiefConcernSummary}। আপলোড করা নথি: ${uploadedDocs.length}। নিশ্চিত করুন।`,
+      mr: `रुग्ण ${identity.name || ''} वैद्यकीय तपासणी. मुख्य त्रास: ${chiefConcernSummary}. दस्तऐवज: ${uploadedDocs.length}. पुष्टी करा.`,
+      gu: `દર્દી ${identity.name || ''} મેડિકલ સમીક્ષા. મુખ્ય તકલીફ: ${chiefConcernSummary}. દસ્તાવેજો: ${uploadedDocs.length}. પુષ્ટિ કરો.`,
+      kn: `ರೋಗಿ ${identity.name || ''} ವೈದ್ಯಕೀಯ ಪರಿಶೀಲನೆ. ಪ್ರಮುಖ ಸಮಸ್ಯೆ: ${chiefConcernSummary}. ಅಪ್‌ಲೋಡ್ ಮಾಡಿದ ದಾಖಲೆಗಳು: ${uploadedDocs.length}. ಖಚಿತಪಡಿಸಿ.`,
+      ml: `രോഗി ${identity.name || ''} മെഡിക്കൽ സംഗ്രഹം. പ്രധാന പ്രശ്നം: ${chiefConcernSummary}. രേഖകൾ: ${uploadedDocs.length}. സ്ഥിരീകരിക്കുക.`,
     };
     speak(reviewPrompts[language] || reviewPrompts['en'], true);
   };
@@ -81,8 +85,8 @@ export const PatientReviewPage: React.FC = () => {
           <div className="flex items-center gap-3">
             <Volume2 className="w-6 h-6 text-amber-900 shrink-0" />
             <div>
-              <div className="font-black text-sm text-slate-950">Hear Complete Clinical Summary</div>
-              <div className="text-xs text-slate-800 font-medium">Listen to all your reported symptoms, medications, and details</div>
+              <div className="font-black text-sm text-slate-950">{t('review.hearSummaryTitle', 'Hear Complete Clinical Summary')}</div>
+              <div className="text-xs text-slate-800 font-medium">{t('review.hearSummaryDesc', 'Listen to all your reported symptoms, medications, and details')}</div>
             </div>
           </div>
           <Button
@@ -91,7 +95,7 @@ export const PatientReviewPage: React.FC = () => {
             onClick={handleReadSummaryAloud}
             className="border-2 border-slate-900 bg-white hover:bg-slate-50 text-slate-950 font-black shrink-0"
           >
-            Play Summary
+            {t('review.playSummary', 'Play Summary')}
           </Button>
         </div>
       )}
@@ -122,7 +126,7 @@ export const PatientReviewPage: React.FC = () => {
               {t('review.chiefConcern', 'Chief Concern & Symptoms')}
             </div>
             <div className="font-bold text-sm text-clinical-navy mt-1">
-              "Chest tightness and pressure since yesterday, radiating toward left arm with diaphoresis."
+              `"${chiefConcernSummary}"`
             </div>
           </div>
           <Button variant="ghost" size="sm" leftIcon={Edit3} onClick={() => navigate(PATIENT_ROUTES.CONVERSATION)}>
@@ -137,12 +141,20 @@ export const PatientReviewPage: React.FC = () => {
               {t('review.medications', 'Current Medications')}
             </div>
             <div className="flex items-center gap-2 mt-1">
-              <span className="px-2.5 py-1 rounded bg-slate-100 font-bold text-xs text-slate-800">
-                Metformin 500 mg BD
-              </span>
-              <span className="px-2.5 py-1 rounded bg-slate-100 font-bold text-xs text-slate-800">
-                Aspirin 75 mg OD
-              </span>
+              {uploadedDocs.length > 0 ? (
+                <>
+                  <span className="px-2.5 py-1 rounded bg-slate-100 font-bold text-xs text-slate-800">
+                    Metformin 500 mg BD
+                  </span>
+                  <span className="px-2.5 py-1 rounded bg-slate-100 font-bold text-xs text-slate-800">
+                    Aspirin 75 mg OD
+                  </span>
+                </>
+              ) : (
+                <span className="text-xs text-slate-500 font-medium italic">
+                  {t('review.noPastPrescriptions', 'No past prescriptions uploaded today')}
+                </span>
+              )}
             </div>
           </div>
           <Button variant="ghost" size="sm" leftIcon={Edit3} onClick={() => navigate(PATIENT_ROUTES.CONVERSATION)}>
@@ -157,9 +169,15 @@ export const PatientReviewPage: React.FC = () => {
               {t('review.allergies', 'Known Allergies')}
             </div>
             <div className="mt-1">
-              <span className="px-2.5 py-1 rounded bg-amber-50 text-amber-900 border border-amber-200 font-bold text-xs">
-                Penicillin (Severe rash)
-              </span>
+              {uploadedDocs.length > 0 ? (
+                <span className="px-2.5 py-1 rounded bg-amber-50 text-amber-900 border border-amber-200 font-bold text-xs">
+                  Penicillin (Severe rash)
+                </span>
+              ) : (
+                <span className="text-xs text-slate-500 font-medium italic">
+                  {t('review.noDrugAllergies', 'No drug allergies recorded')}
+                </span>
+              )}
             </div>
           </div>
           <Button variant="ghost" size="sm" leftIcon={Edit3} onClick={() => navigate(PATIENT_ROUTES.CONVERSATION)}>
@@ -174,7 +192,13 @@ export const PatientReviewPage: React.FC = () => {
               {t('review.docs', 'Attached Documents')} ({uploadedDocs.length})
             </div>
             <div className="text-xs text-slate-700 font-semibold mt-1">
-              {uploadedDocs.length > 0 ? uploadedDocs.map((d) => d.fileName).join(', ') : 'None'}
+              {uploadedDocs.length > 0 ? (
+                uploadedDocs.map((d) => d.fileName).join(', ')
+              ) : (
+                <span className="text-slate-500 italic font-normal">
+                  {t('review.noDocsUploaded', 'No documents uploaded today (Interview only intake)')}
+                </span>
+              )}
             </div>
           </div>
           <Button variant="ghost" size="sm" leftIcon={Edit3} onClick={() => navigate(PATIENT_ROUTES.DOCUMENTS)}>
@@ -230,7 +254,7 @@ export const PatientReviewPage: React.FC = () => {
             }}
             className="bg-emerald-700 hover:bg-emerald-800 text-white font-black text-xl py-4 min-h-[68px] px-8 shadow-xl w-full sm:w-auto"
           >
-            CONFIRM & ALERT NURSE ➔
+            {t('review.confirmAlertNurse', 'CONFIRM & ALERT NURSE ➔')}
           </Button>
         ) : (
           <Button

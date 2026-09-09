@@ -1,3 +1,4 @@
+import { usePatientIntake } from '../../context/PatientIntakeContext';
 import React from 'react';
 import { Check, HelpCircle, AlertCircle } from 'lucide-react';
 import { ConfidenceLevel } from '../../types/clinical';
@@ -18,14 +19,15 @@ export const ConfidenceBadge: React.FC<ConfidenceBadgeProps> = ({
   size = 'md',
   className,
 }) => {
+  const { t } = usePatientIntake();
   const config: Record<ConfidenceLevel, { label: string; icon: any; styles: string }> = {
     high: {
-      label: 'High AI Confidence',
+      label: t('badge.highConfidence', 'High AI Confidence'),
       icon: Check,
       styles: 'bg-emerald-50 text-emerald-800 border-emerald-200',
     },
     medium: {
-      label: 'Moderate AI Confidence',
+      label: t('badge.moderateConfidence', 'Moderate AI Confidence'),
       icon: HelpCircle,
       styles: 'bg-amber-50 text-amber-800 border-amber-200',
     },

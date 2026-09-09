@@ -15,6 +15,6 @@ export const SUPPORTED_LANGUAGES: Language[] = [
   { code: 'bn', name: 'Bengali', nativeName: 'বাংলা', flag: '🇮🇳', voiceSupported: true, sampleGreeting: 'মেডিকিয়োস্কে স্বাগতম' },
   { code: 'mr', name: 'Marathi', nativeName: 'मराठी', flag: '🇮🇳', voiceSupported: true, sampleGreeting: 'मेडीकियोस्कमध्ये आपले स्वागत आहे' },
   { code: 'gu', name: 'Gujarati', nativeName: 'ગુજરાતી', flag: '🇮🇳', voiceSupported: true, sampleGreeting: 'મેડિકિયોસ્કમાં આપનું સ્વાગત છે' },
-  { code: 'kn', name: 'Kannada', nativeName: 'కన్నడ', flag: '🇮🇳', voiceSupported: true, sampleGreeting: 'ಮೆಡಿಕಿಯೋಸ್ಕ್‌ಗೆ സ്വാഗതം' },
+  { code: 'kn', name: 'Kannada', nativeName: 'ಕನ್ನಡ', flag: '🇮🇳', voiceSupported: true, sampleGreeting: 'ಮೆಡಿಕಿಯೋಸ್ಕ್‌ಗೆ ಸ್ವಾಗತ' },
   { code: 'ml', name: 'Malayalam', nativeName: 'മലയാളം', flag: '🇮🇳', voiceSupported: true, sampleGreeting: 'മെഡികിയോസ്കിലേക്ക് സ്വാഗതം' },
 ];

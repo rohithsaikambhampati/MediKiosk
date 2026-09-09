@@ -19,6 +19,7 @@ from app.api.v1.endpoints import (
     handoffs,
     interoperability,
     demo,
+    tts,
 )
 
 api_v1_router = APIRouter(prefix="/api/v1")
@@ -42,3 +43,4 @@ api_v1_router.include_router(consents.router)
 api_v1_router.include_router(handoffs.router)
 api_v1_router.include_router(interoperability.router)
 api_v1_router.include_router(demo.router)
+api_v1_router.include_router(tts.router)
