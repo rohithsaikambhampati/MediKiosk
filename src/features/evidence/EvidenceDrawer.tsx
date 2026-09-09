@@ -48,6 +48,9 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
   const isRejected = fact.verificationStatus === 'rejected' || fact.verificationStatus === 'disputed';
   const isDecided = isConfirmed || isRejected;
 
+  const hasDocSource = fact.sources.some((s) => s.type === 'uploaded-document');
+  const hasVoiceSource = fact.sources.some((s) => s.type === 'conversation-transcript' || s.type === 'patient-self-report');
+
   return (
     <Drawer
       isOpen={isOpen}
@@ -212,28 +215,70 @@ export const EvidenceDrawer: React.FC<EvidenceDrawerProps> = ({
           </h4>
 
           <div className="p-3 rounded-clinical bg-brand-50/60 border border-brand-200 flex items-center justify-between gap-2 text-slate-800 font-semibold">
-            <div className="flex items-center gap-1.5">
-              <MessageSquare className="w-3.5 h-3.5 text-emerald-700" />
-              <span>Patient Voice Intake</span>
-            </div>
-            <ArrowRight className="w-3.5 h-3.5 text-brand-400 shrink-0" />
-            <div className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
-              <span>AI Entity Extraction</span>
-            </div>
-            <ArrowRight className="w-3.5 h-3.5 text-brand-400 shrink-0" />
-            <div className="flex items-center gap-1.5">
-              <FileText className="w-3.5 h-3.5 text-brand-700" />
-              <span>Prescription OCR Evidence</span>
-            </div>
+            {hasDocSource && hasVoiceSource ? (
+              <>
+                <div className="flex items-center gap-1.5">
+                  <MessageSquare className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>Patient Voice Intake</span>
+                </div>
+                <ArrowRight className="w-3.5 h-3.5 text-brand-400 shrink-0" />
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>AI Entity Extraction</span>
+                </div>
+                <ArrowRight className="w-3.5 h-3.5 text-brand-400 shrink-0" />
+                <div className="flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-brand-700" />
+                  <span>Document OCR Evidence</span>
+                </div>
+              </>
+            ) : hasDocSource ? (
+              <>
+                <div className="flex items-center gap-1.5">
+                  <FileText className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>Uploaded Document</span>
+                </div>
+                <ArrowRight className="w-3.5 h-3.5 text-brand-400 shrink-0" />
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-brand-700" />
+                  <span>OCR & Clinical Entity Extraction</span>
+                </div>
+                <ArrowRight className="w-3.5 h-3.5 text-brand-400 shrink-0" />
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>Evidence Linked</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-1.5">
+                  <MessageSquare className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>Patient Voice Intake</span>
+                </div>
+                <ArrowRight className="w-3.5 h-3.5 text-brand-400 shrink-0" />
+                <div className="flex items-center gap-1.5">
+                  <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
+                  <span>Speech Recognition & Entity Extraction</span>
+                </div>
+                <ArrowRight className="w-3.5 h-3.5 text-brand-400 shrink-0" />
+                <div className="flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+                  <span>Voice-Verified Fact</span>
+                </div>
+              </>
+            )}
           </div>
         </div>
 
         {/* 2. SOURCE DOCUMENT & SNIPPETS */}
         <div className="space-y-2">
           <h4 className="text-xs uppercase font-extrabold tracking-wider text-slate-700 flex items-center gap-1.5">
-            <FileText className="w-4 h-4 text-brand-700" />
-            <span>2. Source Documents & Transcripts ({fact.sources.length})</span>
+            {hasDocSource ? (
+              <FileText className="w-4 h-4 text-brand-700" />
+            ) : (
+              <MessageSquare className="w-4 h-4 text-emerald-700" />
+            )}
+            <span>2. {hasDocSource ? 'Source Documents & Transcripts' : 'Source Voice Transcripts'} ({fact.sources.length})</span>
           </h4>
 
           <div className="space-y-3">

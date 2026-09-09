@@ -17,7 +17,6 @@ export const PatientStoryPage: React.FC = () => {
   const hasDocs = uploadedDocs.length > 0;
   const [selectedFact, setSelectedFact] = useState<MedicalFact | null>(null);
   const [isEvidenceOpen, setIsEvidenceOpen] = useState(false);
-  const [showConflictModal, setShowConflictModal] = useState(false);
 
   React.useEffect(() => {
     if (accessibility.voiceGuidance || accessibility.easyMode) {
@@ -82,80 +81,7 @@ export const PatientStoryPage: React.FC = () => {
               : t('story.interviewBannerDesc', 'Every reported symptom, duration, and clinical detail is linked directly to your interview response.')}
           </div>
         </div>
-
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowConflictModal((prev) => !prev)}
-        >
-          {showConflictModal ? t('story.hideConflict', 'Hide Conflict Banner') : t('story.simulateConflict', 'Simulate Dosage Conflict')}
-        </Button>
       </div>
-
-      {/* Mock Conflict Alert Card (Interactive Scenario) */}
-      {showConflictModal && (
-        <Card variant="urgent" padding="md" className="border-l-4 border-l-amber-500 bg-amber-50/90 mb-6 shadow-md">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
-              <div>
-                <h4 className="font-extrabold text-sm text-amber-950">⚠ {t('story.conflictDetectedTitle', 'Information Conflict Detected')}</h4>
-                <div className="text-xs text-amber-900 mt-1 space-y-1">
-                  <p>
-                    <strong>{t('story.patientReported', 'Patient reported:')}</strong> Metformin 500 mg (Voice Interview)
-                  </p>
-                  <p>
-                    <strong>{t('story.latestPrescription', 'Latest prescription:')}</strong> Metformin 850 mg (Prescription_Feb2025.jpg)
-                  </p>
-                  <p className="text-[11px] text-amber-800 italic mt-1">
-                    {t('story.dosageReviewNotice', 'Sources contain different dosage values. Please review during doctor consultation.')}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 shrink-0">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setSelectedFact({
-                    id: 'fact-metformin',
-                    patientId: 'P-10042',
-                    category: 'medication',
-                    title: 'Metformin Dosage Discrepancy',
-                    detail: 'Metformin 500 mg / 850 mg dosage discrepancy between voice report and prescription.',
-                    extractedDate: 'Today',
-                    verificationStatus: factVerificationOverrides['fact-metformin'] || 'needs-verification',
-                    confidence: 'medium',
-                    sources: [
-                      {
-                        id: 'src-1',
-                        type: 'uploaded-document',
-                        title: 'Prescription_Feb2025.jpg',
-                        date: '03 Feb 2025',
-                        snippetText: 'Rx: Tab Metformin 850mg BD after food.',
-                        confidence: 'high',
-                      },
-                      {
-                        id: 'src-2',
-                        type: 'conversation-transcript',
-                        title: 'Voice Interview - Q: Current Medicines',
-                        date: '10:12 AM Today',
-                        snippetText: 'I take Metformin 500 mg twice daily for my blood sugar.',
-                        confidence: 'medium',
-                      },
-                    ],
-                  });
-                  setIsEvidenceOpen(true);
-                }}
-              >
-                {t('story.viewSources', 'View Sources')}
-              </Button>
-            </div>
-          </div>
-        </Card>
-      )}
 
       {/* Easy Mode Audio Story Banner */}
       {accessibility.easyMode && (

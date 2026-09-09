@@ -221,17 +221,19 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
       }));
       const verifiedCount = finalSymptoms.filter((f) => f.verificationStatus === 'doctor-verified').length;
 
+      const hasUploadedDocs = uploadedDocs.length > 0;
       return {
         ...baseStory,
         summaryParagraph: summaryText,
         chiefComplaint: complaint,
         onsetAndDuration: duration,
         reportedSymptoms: finalSymptoms,
-        currentMedications: uploadedDocs.length > 0 ? baseStory.currentMedications : [],
-        allergies: uploadedDocs.length > 0 ? baseStory.allergies : [],
-        abnormalLabs: uploadedDocs.length > 0 ? baseStory.abnormalLabs : [],
-        detectedConflicts: uploadedDocs.length > 0 ? baseStory.detectedConflicts : [],
-        medicalTimeline: uploadedDocs.length > 0 ? baseStory.medicalTimeline : [
+        currentMedications: hasUploadedDocs ? baseStory.currentMedications : [],
+        allergies: hasUploadedDocs ? baseStory.allergies : [],
+        abnormalLabs: hasUploadedDocs ? baseStory.abnormalLabs : [],
+        detectedConflicts: hasUploadedDocs ? baseStory.detectedConflicts : [],
+        documents: hasUploadedDocs ? baseStory.documents : [],
+        medicalTimeline: hasUploadedDocs ? baseStory.medicalTimeline : [
           {
             id: 'time-01',
             patientId: identity.mrn || 'patient-ramesh-01',
@@ -253,13 +255,14 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
           },
         ],
         verificationProgress: {
-          totalFacts: finalSymptoms.length + (uploadedDocs.length > 0 ? baseStory.currentMedications.length : 0),
-          verifiedFacts: verifiedCount + (uploadedDocs.length > 0 ? 1 : 0),
+          totalFacts: finalSymptoms.length + (hasUploadedDocs ? baseStory.currentMedications.length : 0),
+          verifiedFacts: verifiedCount + (hasUploadedDocs ? 1 : 0),
           unverifiedFacts: finalSymptoms.length - verifiedCount,
         },
       };
     }
 
+    const hasUploadedDocs = uploadedDocs.length > 0;
     const rawSymptoms = baseStory.reportedSymptoms.map((f) => ({
       ...f,
       verificationStatus: factVerificationOverrides[f.id] || f.verificationStatus,
@@ -269,6 +272,32 @@ export const PatientIntakeProvider: React.FC<{ children: React.ReactNode }> = ({
     return {
       ...baseStory,
       reportedSymptoms: rawSymptoms,
+      currentMedications: hasUploadedDocs ? baseStory.currentMedications : [],
+      allergies: hasUploadedDocs ? baseStory.allergies : [],
+      abnormalLabs: hasUploadedDocs ? baseStory.abnormalLabs : [],
+      detectedConflicts: hasUploadedDocs ? baseStory.detectedConflicts : [],
+      documents: hasUploadedDocs ? baseStory.documents : [],
+      medicalTimeline: hasUploadedDocs ? baseStory.medicalTimeline : [
+        {
+          id: 'time-01',
+          patientId: identity.mrn || 'patient-ramesh-01',
+          date: language === 'te' ? 'ఈరోజు' : 'Today',
+          year: '2026',
+          title: language === 'te' ? 'కియోస్క్ ఇంటర్వ్యూ' : 'Kiosk Intake',
+          type: 'symptom-onset',
+          description: baseStory.summaryParagraph,
+          source: {
+            id: 'src-time-01',
+            type: 'patient-self-report',
+            title: language === 'te' ? 'కియోస్క్ వాయిస్ ఇన్‌టేక్' : 'Kiosk Voice Intake',
+            date: language === 'te' ? 'ఈరోజు' : 'Today',
+            snippetText: baseStory.chiefComplaint,
+            confidence: 'high',
+          },
+          confidence: 'high',
+          tags: ['Interview', 'Intake'],
+        },
+      ],
       verificationProgress: {
         totalFacts: rawSymptoms.length,
         verifiedFacts: verifiedCount,

@@ -126,17 +126,23 @@ export const PatientStory: React.FC<PatientStoryProps> = ({
               <span>{t('story.currentMedications', `Current Medications (${story.currentMedications.length})`, { count: story.currentMedications.length })}</span>
             </h4>
 
-            <div className="divide-y divide-clinical-border">
-              {story.currentMedications.map((med) => (
-                <div key={med.id} className="py-2.5 first:pt-0 last:pb-0 flex items-center justify-between text-xs">
-                  <div>
-                    <div className="font-bold text-clinical-navy">{med.name} {med.dosage}</div>
-                    <div className="text-clinical-muted">{med.frequency}</div>
+            {story.currentMedications.length > 0 ? (
+              <div className="divide-y divide-clinical-border">
+                {story.currentMedications.map((med) => (
+                  <div key={med.id} className="py-2.5 first:pt-0 last:pb-0 flex items-center justify-between text-xs">
+                    <div>
+                      <div className="font-bold text-clinical-navy">{med.name} {med.dosage}</div>
+                      <div className="text-clinical-muted">{med.frequency}</div>
+                    </div>
+                    <StatusBadge status={med.verificationStatus === 'doctor-verified' ? 'verified' : 'needs-verification'} size="sm" />
                   </div>
-                  <StatusBadge status={med.verificationStatus === 'doctor-verified' ? 'verified' : 'needs-verification'} size="sm" />
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-slate-500 italic py-1">
+                {t('story.noMedicationsFound', 'No medications recorded. No prescription documents were uploaded today.')}
+              </p>
+            )}
           </Card>
 
           {/* Allergies */}
@@ -146,17 +152,23 @@ export const PatientStory: React.FC<PatientStoryProps> = ({
               <span>{t('story.allergies', `Allergies (${story.allergies.length})`, { count: story.allergies.length })}</span>
             </h4>
 
-            <div className="flex flex-col gap-2">
-              {story.allergies.map((alg) => (
-                <div key={alg.id} className="p-2.5 rounded bg-red-50/50 border border-red-200 flex items-center justify-between text-xs">
-                  <div>
-                    <span className="font-bold text-red-950">{alg.allergen}</span>
-                    <span className="text-red-800 ml-2">• {t('story.reaction', 'Reaction:')} {alg.reaction}</span>
+            {story.allergies.length > 0 ? (
+              <div className="flex flex-col gap-2">
+                {story.allergies.map((alg) => (
+                  <div key={alg.id} className="p-2.5 rounded bg-red-50/50 border border-red-200 flex items-center justify-between text-xs">
+                    <div>
+                      <span className="font-bold text-red-950">{alg.allergen}</span>
+                      <span className="text-red-800 ml-2">• {t('story.reaction', 'Reaction:')} {alg.reaction}</span>
+                    </div>
+                    <RiskBadge level={alg.severity} size="sm" />
                   </div>
-                  <RiskBadge level={alg.severity} size="sm" />
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-slate-500 italic py-1">
+                {t('story.noAllergiesReported', 'No known drug or food allergies reported.')}
+              </p>
+            )}
           </Card>
 
           {/* Document-Extracted Lab Findings */}
